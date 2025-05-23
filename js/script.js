@@ -12,6 +12,108 @@ const STORAGE_KEY = 'personal-nav-sites';
 // 初始网站数据
 const initialSites = [
     {
+        name: 'Leleo 免费二级域名分发系统',
+        url: 'https://sds.leleo.top',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Jay的资源库 | 互联网资源集大成者',
+        url: 'https://www.lovejay.top',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '一键翻唱任意歌手的任意歌曲！',
+        url: 'https://kevinwang676-neucosvc-colab.hf.space/',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '速剧：短剧爱好者的天堂，免费观看',
+        url: 'https://m.suju.app',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '果冻代理下载',
+        url: 'https://down.66a.vip',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'ChatGPT 账号注册并免费获取 API Key，无需国外手机号接码、无需国外信用卡绑卡（临时邮箱注册）-IT知识空间',
+        url: 'https://blog.fjy.zone/archives/ai-account-chatgpt-free',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'AIchatOS2GPT',
+        url: 'https://chat18.aichatos68.com/#/chat/1744721558898',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Ayobe小贤定向链接 - 飞书云文档',
+        url: 'https://c1wtkpld08.feishu.cn/sheets/GvuusRw89h8f4jt0U0Cce00LnWb',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Cloud Studio - 云端开发，化繁为简',
+        url: 'https://cloudstudio.net',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '模型库首页 · 魔搭社区',
+        url: 'https://www.modelscope.cn/models?page=1&tasks=auto-speech-recognition&type=audio',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '智能AI聊天工具-免费GPT网站在线体验无限制使用-免费ChatGPT',
+        url: 'https://freegpt.tech',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Models | OpenRouter开源模型社区',
+        url: 'https://openrouter.ai/models',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Free QWQ - 免费分布式 AI 算力平台',
+        url: 'https://qwq.aigpu.cn',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'Apifox',
+        url: 'https://app.apifox.com/main/teams/3506393?tab=project',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '免费节点 - AirportNode',
+        url: 'https://gitlab.com/zhifan999/fq/-/wikis/home',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '首页 ·维基 ·志帆 / FQ ·极狐GitLab',
+        url: 'https://www.airportnode.com/category-1.html',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: 'B站',
+        url: 'https://www.bilibili.com',
+        category: 'common',
+        icon: 'bi-bilibili'
+    },
+    {
         name: '百度',
         url: 'https://www.baidu.com',
         category: 'common',
