@@ -12,6 +12,18 @@ const STORAGE_KEY = 'personal-nav-sites';
 // 初始网站数据
 const initialSites = [
     {
+        name: '百度',
+        url: 'https://www.baidu.com',
+        category: 'common',
+        icon: 'bi-search'
+    },
+    {
+        name: '淘宝',
+        url: 'https://www.taobao.com',
+        category: 'common',
+        icon: 'bi-cart'
+    },
+    {
         name: 'Google',
         url: 'https://www.google.com',
         category: 'common',
