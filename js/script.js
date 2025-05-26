@@ -20,6 +20,13 @@ const exportBtn = document.getElementById('export-btn');
 const importFile = document.getElementById('import-file');
 const toast = document.getElementById('toast');
 
+// 添加调试日志
+console.log('脚本开始执行...');
+console.log('DOM元素加载状态:');
+console.log('searchInput:', searchInput);
+console.log('addSiteBtn:', addSiteBtn);
+console.log('categoryTags:', categoryTags);
+
 // 网站详情元素
 const siteDetailIcon = document.querySelector('.site-detail-icon i');
 const siteDetailName = document.querySelector('.site-detail-name');
@@ -280,14 +287,37 @@ const initialSites = [
 
 // 获取存储的网站数据
 function getSavedSites() {
-    const savedSites = localStorage.getItem(STORAGE_KEY);
-    return savedSites ? JSON.parse(savedSites) : initialSites;
+    console.log('获取保存的网站数据...');
+    try {
+        const savedSites = localStorage.getItem(STORAGE_KEY);
+        console.log('localStorage中的数据:', savedSites ? '存在' : '不存在');
+        
+        if (savedSites) {
+            const parsedSites = JSON.parse(savedSites);
+            console.log(`从localStorage加载了 ${parsedSites.length} 个网站`);
+            return parsedSites;
+        } else {
+            console.log(`使用初始数据 ${initialSites.length} 个网站`);
+            // 初始化时保存默认网站数据
+            saveSites(initialSites);
+            return initialSites;
+        }
+    } catch (error) {
+        console.error('获取保存的网站数据时出错:', error);
+        return initialSites;
+    }
 }
 
 // 保存网站数据到本地存储
 function saveSites(sites) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-    updateSiteCount(sites.length);
+    console.log(`保存 ${sites.length} 个网站到localStorage`);
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+        updateSiteCount(sites.length);
+    } catch (error) {
+        console.error('保存网站数据时出错:', error);
+        showToast('保存数据时出错，请检查浏览器存储设置');
+    }
 }
 
 // 更新网站计数
@@ -297,18 +327,23 @@ function updateSiteCount(count) {
 
 // 渲染网站卡片
 function renderSites(sites = getSavedSites()) {
+    console.log(`开始渲染 ${sites.length} 个网站`);
+    
     // 清空现有内容
     document.querySelectorAll('.sites-container').forEach(container => {
         container.innerHTML = '';
     });
 
     // 根据当前选择的分类过滤网站
+    let filteredSites = sites;
     if (currentCategory !== 'all' && !isFiltering) {
-        sites = sites.filter(site => site.category === currentCategory);
+        filteredSites = sites.filter(site => site.category === currentCategory);
+        console.log(`已过滤类别 "${currentCategory}"，剩余 ${filteredSites.length} 个网站`);
     }
 
     // 显示/隐藏空状态
-    if (sites.length === 0) {
+    if (filteredSites.length === 0) {
+        console.log('没有符合条件的网站，显示空状态');
         emptyState.style.display = 'block';
         document.querySelectorAll('.category').forEach(cat => {
             cat.style.display = 'none';
@@ -319,13 +354,15 @@ function renderSites(sites = getSavedSites()) {
     }
 
     // 按分类组织网站
-    const sitesByCategory = sites.reduce((acc, site) => {
+    const sitesByCategory = filteredSites.reduce((acc, site) => {
         if (!acc[site.category]) {
             acc[site.category] = [];
         }
         acc[site.category].push(site);
         return acc;
     }, {});
+
+    console.log('按分类组织的网站:', Object.keys(sitesByCategory).map(cat => `${cat}: ${sitesByCategory[cat].length}`));
 
     // 显示/隐藏分类
     document.querySelectorAll('.category').forEach(category => {
@@ -340,8 +377,13 @@ function renderSites(sites = getSavedSites()) {
     // 渲染每个分类的网站
     Object.keys(sitesByCategory).forEach(category => {
         const container = document.querySelector(`#${category} .sites-container`);
-        if (!container) return;
+        if (!container) {
+            console.warn(`没有找到容器 #${category} .sites-container`);
+            return;
+        }
 
+        console.log(`为分类 "${category}" 渲染 ${sitesByCategory[category].length} 个网站`);
+        
         sitesByCategory[category].forEach((site, index) => {
             const siteCard = document.createElement('a');
             siteCard.href = 'javascript:void(0);'; // 改为不直接跳转
@@ -368,10 +410,12 @@ function renderSites(sites = getSavedSites()) {
     // 更新搜索结果信息
     if (isFiltering) {
         searchResultInfo.style.display = 'flex';
-        resultCount.textContent = sites.length;
+        resultCount.textContent = filteredSites.length;
     } else {
         searchResultInfo.style.display = 'none';
     }
+    
+    console.log('网站渲染完成');
 }
 
 // 显示网站详情
@@ -648,20 +692,31 @@ function importData(event) {
 
 // 切换分类
 function changeCategory(category) {
-    currentCategory = category;
-    localStorage.setItem(LAST_CATEGORY_KEY, category);
+    console.log(`切换分类: 从 "${currentCategory}" 到 "${category}"`);
     
-    // 更新活动标签样式
-    document.querySelectorAll('.category-tag').forEach(tag => {
-        if (tag.dataset.category === category) {
-            tag.classList.add('active');
-        } else {
-            tag.classList.remove('active');
+    try {
+        currentCategory = category;
+        localStorage.setItem(LAST_CATEGORY_KEY, category);
+        
+        // 更新活动标签样式
+        const allTags = document.querySelectorAll('.category-tag');
+        console.log(`找到 ${allTags.length} 个分类标签`);
+        
+        allTags.forEach(tag => {
+            if (tag.dataset.category === category) {
+                tag.classList.add('active');
+            } else {
+                tag.classList.remove('active');
+            }
+        });
+        
+        if (!isFiltering) {
+            renderSites();
         }
-    });
-    
-    if (!isFiltering) {
-        renderSites();
+        
+        console.log(`分类切换完成: "${category}"`);
+    } catch (error) {
+        console.error('切换分类时出错:', error);
     }
 }
 
@@ -1201,29 +1256,102 @@ function updateModelStatus(apiAvailable) {
     }
 }
 
+// 设置所有事件监听器
+function setupEventListeners() {
+    console.log('设置事件监听器...');
+    
+    // 搜索功能
+    searchBtn.addEventListener('click', searchSites);
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') searchSites();
+    });
+    clearSearchBtn.addEventListener('click', clearSearch);
+    
+    // 添加网站功能
+    addSiteBtn.addEventListener('click', openModal);
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+    addSiteForm.addEventListener('submit', addNewSite);
+    
+    // 图标选择功能
+    document.getElementById('site-icon').addEventListener('input', function() {
+        updateIconPreview(this.value);
+    });
+    
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const iconClass = this.dataset.icon;
+            document.getElementById('site-icon').value = iconClass;
+            updateIconPreview(iconClass);
+        });
+    });
+    
+    // 分类标签点击事件
+    categoryTags.addEventListener('click', (e) => {
+        if (e.target.classList.contains('category-tag')) {
+            console.log('分类标签点击:', e.target.dataset.category);
+            changeCategory(e.target.dataset.category);
+        }
+    });
+    
+    // 主题切换
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // 导入/导出功能
+    exportBtn.addEventListener('click', exportData);
+    importFile.addEventListener('change', importData);
+    
+    // 点击模态框外部关闭
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    });
+    
+    console.log('事件监听器设置完成');
+}
+
 // 在页面加载时初始化
 document.addEventListener('DOMContentLoaded', async function() {
-    // 初始化站点搜索和数据
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
-    const categoryFilter = document.getElementById('category-filter');
-    const addSiteBtn = document.getElementById('add-site-btn');
-    const clearSearchBtn = document.getElementById('clear-search');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const emptyState = document.getElementById('empty-state');
+    console.log('DOMContentLoaded 事件触发');
     
-    // ... existing code ...
+    // 显示加载动画
+    showLoader();
     
-    // 初始化聊天窗口
-    initChat();
-    
-    // 更新模型状态
-    const apiAvailable = await checkModelScopeAPIStatus();
-    updateModelStatus(apiAvailable);
-    
-    // 添加初始欢迎消息
-    setTimeout(() => {
-        addAIMessage(`👋 欢迎使用AI助手！我可以帮助您解答问题和提供信息。
+    try {
+        // 应用存储的主题
+        applyStoredTheme();
+        
+        // 获取保存的网站数据
+        const sites = getSavedSites();
+        console.log('加载的网站数据:', sites);
+        
+        // 更新网站计数
+        updateSiteCount(sites.length);
+        
+        // 设置分类标签的活动状态
+        console.log('当前分类:', currentCategory);
+        changeCategory(currentCategory);
+        
+        // 渲染网站
+        renderSites();
+        
+        // 事件监听器设置
+        setupEventListeners();
+        
+        // 初始化聊天窗口
+        initChat();
+        
+        // 更新模型状态
+        const apiAvailable = await checkModelScopeAPIStatus();
+        updateModelStatus(apiAvailable);
+        
+        // 添加初始欢迎消息
+        setTimeout(() => {
+            addAIMessage(`👋 欢迎使用AI助手！我可以帮助您解答问题和提供信息。
 
 您可以从下方选择不同的AI模型：
 - **OpenAI模型**：GPT-3.5和GPT-4，通用性强
@@ -1233,7 +1361,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 每个模型都有不同的特点和擅长领域，您可以根据需要选择最适合的模型。
 
 如果您有关于导航站点的使用问题，或者想了解如何添加和管理网站，都可以随时向我提问！`, "assistant");
-    }, 500);
+        }, 500);
+    } catch (error) {
+        console.error('初始化过程中发生错误:', error);
+    } finally {
+        // 隐藏加载动画
+        setTimeout(hideLoader, 500);
+    }
 });
 
 // 初始化聊天窗口
