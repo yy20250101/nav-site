@@ -1,0 +1,22 @@
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器/IDE文件
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 临时文件
+*.tmp
+*.log
+*.bak
+*.swp
+
+# 个人配置文件
+copy_images.bat
+
+# 原始图片文件
+mmexport*.jpg 

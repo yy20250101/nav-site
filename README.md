@@ -1,138 +1,49 @@
-# 六月天导航
+# 六月天导航站
 
-一个简洁美观的个人导航网站，基于HTML、CSS和JavaScript开发。支持多主题切换、本地数据存储、网站分类、搜索等功能。
+一个简洁、美观、实用的个人导航网站，集合了常用网站、工具和资源。
 
-## 主要功能
+## 特点
 
-- 🎨 多主题切换（默认、暗色、海洋、森林、日落主题）
-- 🔍 搜索和分类标签筛选
-- ⭐ 收藏夹功能
-- 📱 响应式设计
-- 💾 本地数据存储
-- 📤 导入/导出功能
-- 🎯 拖拽排序
-- 🌈 自定义主题颜色
+- 精美背景图片轮播
+- 网站分类浏览
+- 快速搜索功能
+- 收藏功能
+- 自定义添加网站
+- 多种主题切换
+- 数据导入导出
+- 本地数据存储
+- 响应式设计，适配各种设备
 
-## 本地开发
+## 使用方法
 
-1. 克隆仓库到本地：
-```bash
-git clone https://github.com/你的用户名/nav-site.git
-cd nav-site
-```
+### 本地运行
 
-2. 使用浏览器打开 `index.html` 文件即可预览。
+1. 克隆或下载本项目
+2. 将您的背景图片放入 `images` 文件夹，命名为 `bg1.jpg`、`bg2.jpg` 和 `bg3.jpg`
+   - 或者运行 `copy_images.bat` 脚本自动复制图片（需要将三张图片放在项目根目录下）
+3. 用浏览器打开 `index.html` 文件
 
-## 更新部署
+### 部署到GitHub Pages
 
-当你在本地修改了代码后，需要按以下步骤将更新推送到GitHub仓库：
+1. Fork 或克隆本仓库
+2. 启用 GitHub Pages 功能
+3. 访问 `https://你的用户名.github.io/仓库名` 即可
 
-1. 进入项目目录：
-```bash
-cd nav-site-main  # 或你的项目目录名
-```
+## 自定义
 
-2. 查看修改的文件状态：
-```bash
-git status
-```
+- 修改 `js/script.js` 中的 `initialSites` 数组可以自定义预设网站
+- 修改 `css/style.css` 可以调整网站样式
+- 替换 `images` 文件夹中的背景图片可以更换背景
 
-3. 添加修改的文件到暂存区：
-```bash
-git add .  # 添加所有修改的文件
-```
-或者添加指定文件：
-```bash
-git add index.html css/style.css js/script.js
-```
+## 数据存储
 
-4. 确认文件已添加到暂存区：
-```bash
-git status  # 应该看到文件变成绿色，表示已暂存
-```
+所有数据都存储在浏览器的本地存储中，包括：
+- 网站数据
+- 收藏夹
+- 主题设置
 
-5. 提交修改：
-```bash
-git commit -m "描述你的修改内容"
-```
+您可以通过导入导出功能备份和恢复数据。
 
-6. 确保已配置GitHub认证（首次使用需要配置）：
-```bash
-git config --global user.name "你的GitHub用户名"
-git config --global user.email "你的GitHub邮箱"
-```
-
-7. 推送到GitHub仓库：
-```bash
-git push origin main  # main是你的默认分支名
-```
-
-### 常见问题解决：
-
-1. 如果 `git push` 报错"Empty reply from server"：
-```bash
-# 重新设置远程仓库地址
-git remote set-url origin https://github.com/你的用户名/nav-site.git
-# 或使用SSH地址
-git remote set-url origin git@github.com:你的用户名/nav-site.git
-```
-
-2. 如果遇到认证失败：
-   - 访问 GitHub.com
-   - 点击头像 -> Settings -> Developer settings -> Personal access tokens
-   - 生成新的token
-   - 使用token作为密码进行推送
-
-3. 如果遇到冲突：
-```bash
-git pull origin main  # 先拉取最新代码
-# 解决冲突后
-git add .
-git commit -m "解决冲突"
-git push origin main
-```
-
-4. 如果想撤销最后一次提交：
-```bash
-git reset --soft HEAD^  # 撤销提交但保留修改
-# 或
-git reset --hard HEAD^  # 撤销提交并删除修改（谨慎使用）
-```
-
-### 部署后的检查：
-
-1. 访问你的GitHub仓库页面，检查代码是否已更新
-2. 进入仓库的Settings -> Pages，检查部署状态
-3. 等待1-2分钟后访问你的网站地址，确认更新是否生效
-
-注意事项：
-- 确保你有正确的仓库写入权限
-- 推送前先在本地测试确保一切正常
-- 保持良好的提交习惯，写清晰的提交信息
-- 定期备份重要数据
-
-## 自定义配置
-
-1. 修改网站标题：
-   - 打开 `index.html`
-   - 修改 `<title>` 标签内容
-   - 修改 logo 区域的标题文字
-
-2. 添加自定义网站：
-   - 打开 `js/script.js`
-   - 在 `initialSites` 数组中添加新的网站对象
-
-3. 修改主题颜色：
-   - 打开 `css/style.css`
-   - 修改相应主题类中的颜色变量
-
-## 技术栈
-
-- HTML5
-- CSS3
-- JavaScript (ES6+)
-- Bootstrap Icons
-
-## 许可证
+## 开源协议
 
 MIT License 
