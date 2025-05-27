@@ -710,35 +710,34 @@ let currentTheme = localStorage.getItem('theme') || 'default';
 
 // DOM 元素
 const elements = {
-    favoritesBtn: document.getElementById('favorites-btn'),
-    favoritesModal: document.getElementById('favorites-modal'),
-    favoritesList: document.getElementById('favorites-list'),
-    importExportBtn: document.getElementById('import-export-btn'),
-    importExportModal: document.getElementById('import-export-modal'),
-    exportBtn: document.getElementById('export-btn'),
-    importBtn: document.getElementById('import-btn'),
-    importFile: document.getElementById('import-file'),
-    themeSettingsBtn: document.getElementById('theme-settings-btn'),
-    themeSettingsModal: document.getElementById('theme-settings-modal'),
-    themeOptions: document.querySelectorAll('.theme-option'),
-    primaryColorPicker: document.getElementById('primary-color'),
-    accentColorPicker: document.getElementById('accent-color'),
-    searchInput: document.getElementById('search-input'),
-    searchBtn: document.getElementById('search-btn'),
-    addSiteBtn: document.getElementById('add-site-btn'),
-    addSiteModal: document.getElementById('add-site-modal'),
-    siteDetailModal: document.getElementById('site-detail-modal'),
-    confirmModal: document.getElementById('confirm-modal'),
-    closeButtons: document.querySelectorAll('.close-btn'),
-    addSiteForm: document.getElementById('add-site-form'),
-    categoryTags: document.getElementById('category-tags'),
-    mainContent: document.getElementById('main-content'),
-    emptyState: document.getElementById('empty-state'),
-    searchResultInfo: document.getElementById('search-result-info'),
-    resultCount: document.getElementById('result-count'),
-    clearSearchBtn: document.getElementById('clear-search'),
-    pageLoader: document.getElementById('page-loader'),
-    toast: document.getElementById('toast')
+    favoritesBtn: null,
+    favoritesModal: null,
+    favoritesList: null,
+    importExportBtn: null,
+    importExportModal: null,
+    exportBtn: null,
+    importBtn: null,
+    importFile: null,
+    themeBtn: null,
+    themeSettingsModal: null,
+    themeOptions: null,
+    primaryColorPicker: null,
+    accentColorPicker: null,
+    searchInput: null,
+    searchBtn: null,
+    addSiteBtn: null,
+    addSiteModal: null,
+    closeButtons: null,
+    addSiteForm: null,
+    categoryTags: null,
+    mainContent: null,
+    emptyState: null,
+    searchResultInfo: null,
+    resultCount: null,
+    clearSearchBtn: null,
+    resetSearchBtn: null,
+    pageLoader: null,
+    toast: null
 };
 
 // 主题配置
@@ -816,46 +815,6 @@ function applyTheme(theme) {
 function initializeFavorites() {
     // 从本地存储加载收藏夹数据
     favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    
-    // 添加收藏按钮到头部
-    const header = document.querySelector('header');
-    const favBtn = document.createElement('button');
-    favBtn.className = 'fav-btn';
-    favBtn.innerHTML = '<i class="bi bi-star"></i>';
-    header.appendChild(favBtn);
-    
-    // 创建收藏夹模态框
-    const favModal = document.createElement('div');
-    favModal.className = 'modal';
-    favModal.id = 'favorites-modal';
-    favModal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>我的收藏</h2>
-                <button class="close-btn"><i class="bi bi-x"></i></button>
-            </div>
-            <div class="favorites-list"></div>
-        </div>
-    `;
-    document.body.appendChild(favModal);
-    
-    // 收藏按钮点击事件
-    favBtn.addEventListener('click', () => {
-        renderFavorites();
-        favModal.style.display = 'block';
-    });
-    
-    // 关闭按钮事件
-    favModal.querySelector('.close-btn').addEventListener('click', () => {
-        favModal.style.display = 'none';
-    });
-    
-    // 点击模态框外部关闭
-    favModal.addEventListener('click', (e) => {
-        if (e.target === favModal) {
-            favModal.style.display = 'none';
-        }
-    });
 }
 
 function toggleFavorite(site) {
@@ -871,65 +830,138 @@ function toggleFavorite(site) {
     }
     localStorage.setItem('favorites', JSON.stringify(favorites));
     renderSites(); // 更新网站列表中的收藏状态
+    
+    // 如果收藏夹模态框是打开的，更新收藏夹列表
+    if (elements.favoritesModal && elements.favoritesModal.style.display === 'block') {
+        renderFavorites();
+    }
 }
 
 function renderFavorites() {
-    const favoritesList = document.querySelector('.favorites-list');
+    if (!elements.favoritesList) return;
+    
     if (favorites.length === 0) {
-        favoritesList.innerHTML = '<div class="empty-favorites">暂无收藏的网站</div>';
+        elements.favoritesList.innerHTML = '<div class="empty-favorites">暂无收藏的网站</div>';
         return;
     }
     
-    favoritesList.innerHTML = favorites.map(site => `
-        <div class="favorite-item">
-            <i class="bi ${site.icon}"></i>
-            <div class="favorite-info">
-                <div class="favorite-name">${site.name}</div>
-                <div class="favorite-url">${site.url}</div>
+    let html = '';
+    favorites.forEach(site => {
+        const iconHtml = site.faviconUrl ? 
+            `<img src="${site.faviconUrl}" class="site-favicon" alt="${site.name}" onerror="this.onerror=null;this.src='';this.className='bi ${site.icon} site-icon';">` :
+            `<i class="bi ${site.icon}"></i>`;
+            
+        html += `
+            <div class="favorite-item">
+                ${iconHtml}
+                <div class="favorite-info">
+                    <div class="favorite-name">${site.name}</div>
+                    <div class="favorite-url">${site.url}</div>
+                </div>
+                <div class="favorite-actions">
+                    <a href="${site.url}" target="_blank" class="action-btn" title="在新标签页打开">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                    <button class="action-btn remove-favorite" data-site='${JSON.stringify(site)}' title="移除收藏">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </div>
-            <div class="favorite-actions">
-                <a href="${site.url}" target="_blank" class="action-btn">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-                <button class="action-btn remove-favorite" onclick="toggleFavorite(${JSON.stringify(site)})">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    });
+    
+    elements.favoritesList.innerHTML = html;
+    
+    // 添加移除收藏按钮的点击事件
+    elements.favoritesList.querySelectorAll('.remove-favorite').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const siteData = this.dataset.site;
+            if (siteData) {
+                toggleFavorite(JSON.parse(siteData));
+            }
+        });
+    });
 }
 
 // 获取网站图标的函数
 async function getFavicon(url) {
     try {
-        // 尝试多个favicon获取方式
-        const domain = new URL(url).origin;
-        const faviconUrls = [
-            `https://www.google.com/s2/favicons?domain=${url}&sz=32`,
-            `${domain}/favicon.ico`,
-            `${domain}/favicon.png`,
-            `${domain}/apple-touch-icon.png`,
-            `${domain}/apple-touch-icon-precomposed.png`
-        ];
-
-        // 依次尝试每个URL
-        for (const faviconUrl of faviconUrls) {
-            try {
-                const response = await fetch(faviconUrl, { method: 'HEAD' });
-                if (response.ok) {
-                    return faviconUrl;
-                }
-            } catch (error) {
-                console.warn(`Failed to fetch favicon from ${faviconUrl}:`, error);
-                continue;
-            }
+        // 解析URL
+        let domain;
+        try {
+            domain = new URL(url).hostname;
+        } catch (e) {
+            console.error('无效的URL:', url);
+            return null;
         }
 
-        // 如果所有尝试都失败，返回默认图标
-        return null;
+        // 尝试Google Favicon API
+        const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        
+        // 创建图像对象检查图标是否可用
+        return new Promise((resolve) => {
+            const img = new Image();
+            
+            img.onload = function() {
+                // 检查图像是否是默认图标（通常是1x1像素）
+                if (this.width > 1 && this.height > 1) {
+                    resolve(googleFaviconUrl);
+                } else {
+                    // 尝试直接从网站获取favicon
+                    tryDirectFavicon(url, resolve);
+                }
+            };
+            
+            img.onerror = function() {
+                // 尝试直接从网站获取favicon
+                tryDirectFavicon(url, resolve);
+            };
+            
+            // 设置超时
+            setTimeout(() => {
+                if (!img.complete) {
+                    img.src = ''; // 取消加载
+                    tryDirectFavicon(url, resolve);
+                }
+            }, 3000);
+            
+            img.src = googleFaviconUrl;
+        });
     } catch (error) {
-        console.error('Error in getFavicon:', error);
+        console.error('获取网站图标失败:', error);
         return null;
+    }
+}
+
+// 尝试直接从网站获取favicon
+function tryDirectFavicon(url, resolve) {
+    try {
+        const domain = new URL(url).origin;
+        const directFaviconUrl = `${domain}/favicon.ico`;
+        
+        const img = new Image();
+        
+        img.onload = function() {
+            resolve(directFaviconUrl);
+        };
+        
+        img.onerror = function() {
+            // 所有尝试都失败，返回null
+            resolve(null);
+        };
+        
+        // 设置超时
+        setTimeout(() => {
+            if (!img.complete) {
+                img.src = ''; // 取消加载
+                resolve(null);
+            }
+        }, 3000);
+        
+        img.src = directFaviconUrl;
+    } catch (e) {
+        console.error('获取直接favicon失败:', e);
+        resolve(null);
     }
 }
 
@@ -951,7 +983,7 @@ async function handleAddSite(e) {
     // 验证URL格式
     try {
         new URL(url);
-    } catch (e) {
+        } catch (e) {
         showToast('请输入有效的网址', 'error');
         return;
     }
@@ -1019,15 +1051,15 @@ function renderSiteCard(site) {
         `<i class="bi ${site.icon} site-icon"></i>`;
     
     return `
-        <div class="site-card">
+        <div class="site-card" data-url="${site.url}">
             ${iconHtml}
             <div class="site-name">${site.name}</div>
             <div class="site-actions">
-                <a href="${site.url}" target="_blank" class="action-btn">
+                <a href="${site.url}" target="_blank" class="action-btn" title="在新标签页打开">
                     <i class="bi bi-box-arrow-up-right"></i>
                 </a>
                 <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" 
-                        onclick="toggleFavorite(${JSON.stringify(site)})">
+                        data-site='${JSON.stringify(site)}' title="${isFavorite ? '取消收藏' : '添加到收藏'}">
                     <i class="bi bi-star${isFavorite ? '-fill' : ''}"></i>
                 </button>
             </div>
@@ -1037,70 +1069,172 @@ function renderSiteCard(site) {
 
 // 事件监听器
 function initializeEventListeners() {
+    // 搜索功能
+    if (elements.searchInput && elements.searchBtn) {
+        elements.searchInput.addEventListener('input', function() {
+            searchQuery = this.value.trim().toLowerCase();
+            renderSites();
+        });
+        
+        elements.searchBtn.addEventListener('click', function() {
+            searchQuery = elements.searchInput.value.trim().toLowerCase();
+            renderSites();
+        });
+    }
+    
+    // 清除搜索
+    if (elements.clearSearchBtn) {
+        elements.clearSearchBtn.addEventListener('click', function() {
+            if (elements.searchInput) elements.searchInput.value = '';
+            searchQuery = '';
+            renderSites();
+        });
+    }
+    
+    // 重置搜索
+    if (elements.resetSearchBtn) {
+        elements.resetSearchBtn.addEventListener('click', function() {
+            if (elements.searchInput) elements.searchInput.value = '';
+            searchQuery = '';
+            renderSites();
+        });
+    }
+    
+    // 添加网站按钮
+    if (elements.addSiteBtn && elements.addSiteModal) {
+        elements.addSiteBtn.addEventListener('click', function() {
+            elements.addSiteModal.style.display = 'block';
+        });
+    }
+    
+    // 添加网站表单提交
+    if (elements.addSiteForm) {
+        elements.addSiteForm.addEventListener('submit', handleAddSite);
+    }
+    
     // 收藏夹按钮
-    elements.favoritesBtn.addEventListener('click', () => {
-        elements.favoritesModal.style.display = 'block';
-    });
+    if (elements.favoritesBtn && elements.favoritesModal) {
+        elements.favoritesBtn.addEventListener('click', function() {
+            renderFavorites();
+            elements.favoritesModal.style.display = 'block';
+        });
+    }
     
     // 导入导出按钮
-    elements.importExportBtn.addEventListener('click', () => {
-        elements.importExportModal.style.display = 'block';
+    if (elements.importExportBtn && elements.importExportModal) {
+        elements.importExportBtn.addEventListener('click', function() {
+            elements.importExportModal.style.display = 'block';
+        });
+    }
+    
+    // 导出按钮
+    if (elements.exportBtn) {
+        elements.exportBtn.addEventListener('click', exportData);
+    }
+    
+    // 导入按钮
+    if (elements.importBtn && elements.importFile) {
+        elements.importBtn.addEventListener('click', function() {
+            elements.importFile.click();
+        });
+        
+        elements.importFile.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                importData(e.target.files[0]);
+            }
+        });
+    }
+    
+    // 主题按钮
+    if (elements.themeBtn && elements.themeSettingsModal) {
+        elements.themeBtn.addEventListener('click', function() {
+            // 生成主题选项
+            if (elements.themeOptions) {
+                elements.themeOptions.innerHTML = themes.map(theme => `
+                    <div class="theme-option ${theme.id === currentTheme ? 'active' : ''}" data-theme="${theme.id}">
+                        <i class="bi ${theme.icon}"></i>
+                        <span>${theme.name}</span>
+                    </div>
+                `).join('');
+                
+                // 添加主题选项点击事件
+                document.querySelectorAll('.theme-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const theme = this.dataset.theme;
+                        applyTheme(theme);
+                        showToast('主题已切换', 'success');
+                    });
+                });
+            }
+            
+            elements.themeSettingsModal.style.display = 'block';
+        });
+    }
+    
+    // 自定义颜色选择器
+    if (elements.primaryColorPicker && elements.accentColorPicker) {
+        // 加载保存的自定义颜色
+        elements.primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
+        elements.accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
+        
+        elements.primaryColorPicker.addEventListener('change', function() {
+            applyCustomColors(this.value, elements.accentColorPicker.value);
+        });
+        
+        elements.accentColorPicker.addEventListener('change', function() {
+            applyCustomColors(elements.primaryColorPicker.value, this.value);
+        });
+    }
+    
+    // 关闭按钮
+    if (elements.closeButtons) {
+        elements.closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+    }
+    
+    // 点击模态框外部关闭
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
     });
     
-    elements.exportBtn.addEventListener('click', exportData);
-    
-    elements.importBtn.addEventListener('click', () => {
-        elements.importFile.click();
-    });
-    
-    elements.importFile.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            importData(e.target.files[0]);
+    // 按ESC键关闭模态框
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
         }
     });
     
-    // 主题切换按钮
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-        const newTheme = currentTheme === 'dark' ? 'default' : 'dark';
-        applyTheme(newTheme);
-    });
-
-    // 主题设置按钮
-    const themeSettingsBtn = document.getElementById('theme-settings-btn');
-    themeSettingsBtn.addEventListener('click', () => {
-        document.getElementById('theme-settings-modal').style.display = 'block';
-    });
-
-    // 主题选项点击事件
-    document.querySelectorAll('.theme-option').forEach(option => {
-        option.addEventListener('click', () => {
-            const theme = option.dataset.theme;
-            applyTheme(theme);
-        });
-    });
-
-    // 自定义颜色选择器
-    const primaryColorPicker = document.getElementById('primary-color');
-    const accentColorPicker = document.getElementById('accent-color');
-
-    // 加载保存的自定义颜色
-    primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
-    accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
-
-    primaryColorPicker.addEventListener('change', (e) => {
-        applyCustomColors(e.target.value, accentColorPicker.value);
-    });
-
-    accentColorPicker.addEventListener('change', (e) => {
-        applyCustomColors(primaryColorPicker.value, e.target.value);
-    });
-    
-    // 关闭按钮
-    document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.closest('.modal').style.display = 'none';
-        });
+    // 全局点击事件，用于处理网站卡片点击
+    document.addEventListener('click', function(e) {
+        // 处理收藏按钮点击
+        if (e.target.closest('.favorite-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const btn = e.target.closest('.favorite-btn');
+            const siteData = btn.dataset.site;
+            if (siteData) {
+                toggleFavorite(JSON.parse(siteData));
+            }
+        }
+        
+        // 处理网站卡片点击
+        const siteCard = e.target.closest('.site-card');
+        if (siteCard && !e.target.closest('.site-actions')) {
+            const url = siteCard.dataset.url;
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
     });
 }
 
@@ -1261,10 +1395,64 @@ function applyCustomColors(primary, accent) {
 }
 
 // 初始化函数
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否是首次访问
+    const isFirstVisit = !localStorage.getItem('sites');
+    
+    // 如果是首次访问，初始化数据
+    if (isFirstVisit) {
+        // 保存初始网站数据
+        localStorage.setItem('sites', JSON.stringify(initialSites));
+        // 初始化收藏夹
+        localStorage.setItem('favorites', JSON.stringify([]));
+        // 初始化主题
+        localStorage.setItem('theme', 'default');
+    }
+    
+    // 从本地存储加载数据
+    sites = JSON.parse(localStorage.getItem('sites')) || initialSites;
+    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    currentTheme = localStorage.getItem('theme') || 'default';
+    
+    // 初始化DOM元素
+    initializeElements();
+});
+
+// 初始化DOM元素
 function initializeElements() {
     // 显示加载动画
     const loader = document.getElementById('page-loader');
-    loader.style.display = 'flex';
+    if (loader) loader.style.display = 'flex';
+
+    // 初始化所有DOM元素引用
+    elements.searchInput = document.getElementById('search-input');
+    elements.searchBtn = document.getElementById('search-btn');
+    elements.addSiteBtn = document.getElementById('add-site-btn');
+    elements.addSiteModal = document.getElementById('add-site-modal');
+    elements.closeButtons = document.querySelectorAll('.close-btn');
+    elements.addSiteForm = document.getElementById('add-site-form');
+    elements.categoryTags = document.getElementById('category-tags');
+    elements.mainContent = document.getElementById('main-content');
+    elements.emptyState = document.getElementById('empty-state');
+    elements.searchResultInfo = document.getElementById('search-result-info');
+    elements.resultCount = document.getElementById('result-count');
+    elements.clearSearchBtn = document.getElementById('clear-search');
+    elements.resetSearchBtn = document.getElementById('reset-search');
+    elements.pageLoader = loader;
+    elements.toast = document.getElementById('toast');
+    elements.favoritesBtn = document.getElementById('favorites-btn');
+    elements.favoritesModal = document.getElementById('favorites-modal');
+    elements.favoritesList = document.querySelector('.favorites-list');
+    elements.importExportBtn = document.getElementById('import-export-btn');
+    elements.importExportModal = document.getElementById('import-export-modal');
+    elements.exportBtn = document.getElementById('export-btn');
+    elements.importBtn = document.getElementById('import-btn');
+    elements.importFile = document.getElementById('import-file');
+    elements.themeBtn = document.getElementById('theme-btn');
+    elements.themeSettingsModal = document.getElementById('theme-settings-modal');
+    elements.themeOptions = document.querySelector('.theme-options');
+    elements.primaryColorPicker = document.getElementById('primary-color');
+    elements.accentColorPicker = document.getElementById('accent-color');
 
     // 异步初始化所有数据
     Promise.all([
@@ -1293,45 +1481,30 @@ function initializeElements() {
         initializeEventListeners();
         
         // 隐藏加载动画
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 300);
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 300);
+        }
         
         // 显示成功提示
         showToast('网站加载完成', 'success');
+        
+        // 如果是首次访问，显示欢迎提示
+        if (!localStorage.getItem('visited')) {
+            localStorage.setItem('visited', 'true');
+            showToast('欢迎使用六月天导航！', 'success');
+        }
     }).catch(error => {
         console.error('初始化失败:', error);
         showToast('加载失败，请刷新重试', 'error');
     });
 }
 
-// 确保DOM加载完成后再初始化
-document.addEventListener('DOMContentLoaded', initializeElements);
-
-// 初始化DOM元素
-function initializeElements() {
-    elements.searchInput = document.getElementById('search-input');
-    elements.searchBtn = document.getElementById('search-btn');
-    elements.addSiteBtn = document.getElementById('add-site-btn');
-    elements.addSiteModal = document.getElementById('add-site-modal');
-    elements.siteDetailModal = document.getElementById('site-detail-modal');
-    elements.confirmModal = document.getElementById('confirm-modal');
-    elements.closeButtons = document.querySelectorAll('.close-btn');
-    elements.addSiteForm = document.getElementById('add-site-form');
-    elements.categoryTags = document.getElementById('category-tags');
-    elements.mainContent = document.getElementById('main-content');
-    elements.emptyState = document.getElementById('empty-state');
-    elements.searchResultInfo = document.getElementById('search-result-info');
-    elements.resultCount = document.getElementById('result-count');
-    elements.clearSearchBtn = document.getElementById('clear-search');
-    elements.pageLoader = document.getElementById('page-loader');
-    elements.toast = document.getElementById('toast');
-}
-
 // 显示提示信息
 function showToast(message, type = 'info') {
-    const toast = document.getElementById('toast');
+const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast show ${type}`;
     
