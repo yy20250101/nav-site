@@ -257,7 +257,23 @@ const elements = {
     themeSettingsModal: document.getElementById('theme-settings-modal'),
     themeOptions: document.querySelectorAll('.theme-option'),
     primaryColorPicker: document.getElementById('primary-color'),
-    accentColorPicker: document.getElementById('accent-color')
+    accentColorPicker: document.getElementById('accent-color'),
+    searchInput: document.getElementById('search-input'),
+    searchBtn: document.getElementById('search-btn'),
+    addSiteBtn: document.getElementById('add-site-btn'),
+    addSiteModal: document.getElementById('add-site-modal'),
+    siteDetailModal: document.getElementById('site-detail-modal'),
+    confirmModal: document.getElementById('confirm-modal'),
+    closeButtons: document.querySelectorAll('.close-btn'),
+    addSiteForm: document.getElementById('add-site-form'),
+    categoryTags: document.getElementById('category-tags'),
+    mainContent: document.getElementById('main-content'),
+    emptyState: document.getElementById('empty-state'),
+    searchResultInfo: document.getElementById('search-result-info'),
+    resultCount: document.getElementById('result-count'),
+    clearSearchBtn: document.getElementById('clear-search'),
+    pageLoader: document.getElementById('page-loader'),
+    toast: document.getElementById('toast')
 };
 
 // 初始化收藏夹
@@ -468,12 +484,140 @@ function initializeEventListeners() {
     });
 }
 
+// 渲染网站列表
+function renderSites() {
+    const filteredSites = sites.filter(site => {
+        const matchesCategory = currentCategory === 'all' || site.category === currentCategory;
+        const matchesSearch = !searchQuery || 
+            site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            site.url.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+
+    if (filteredSites.length === 0) {
+        elements.mainContent.innerHTML = '';
+        elements.emptyState.style.display = 'block';
+    } else {
+        elements.emptyState.style.display = 'none';
+        const container = document.createElement('div');
+        container.className = 'sites-container';
+
+        filteredSites.forEach(site => {
+            const card = document.createElement('a');
+            card.href = site.url;
+            card.target = '_blank';
+            card.className = 'site-card';
+            card.innerHTML = `
+                <i class="bi ${site.icon} site-icon"></i>
+                <div class="site-name">${site.name}</div>
+            `;
+            
+            // 添加收藏按钮
+            const favoriteBtn = document.createElement('button');
+            favoriteBtn.className = 'favorite-btn';
+            favoriteBtn.innerHTML = `<i class="bi bi-star${favorites.some(f => f.url === site.url) ? '-fill' : ''}"></i>`;
+            favoriteBtn.onclick = (e) => {
+                e.preventDefault();
+                addToFavorites(site);
+                favoriteBtn.innerHTML = '<i class="bi bi-star-fill"></i>';
+            };
+            card.appendChild(favoriteBtn);
+            
+            container.appendChild(card);
+        });
+
+        elements.mainContent.innerHTML = '';
+        elements.mainContent.appendChild(container);
+    }
+
+    // 更新搜索结果信息
+    if (searchQuery) {
+        elements.searchResultInfo.style.display = 'flex';
+        elements.resultCount.textContent = filteredSites.length;
+    } else {
+        elements.searchResultInfo.style.display = 'none';
+    }
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
-    initializeFavorites();
-    initializeTheme();
+    // 初始化网站数据
+    sites = JSON.parse(localStorage.getItem('sites')) || initialSites;
+    localStorage.setItem('sites', JSON.stringify(sites));
+    
+    // 初始化DOM元素
+    elements.searchInput = document.getElementById('search-input');
+    elements.searchBtn = document.getElementById('search-btn');
+    elements.addSiteBtn = document.getElementById('add-site-btn');
+    elements.addSiteModal = document.getElementById('add-site-modal');
+    elements.siteDetailModal = document.getElementById('site-detail-modal');
+    elements.confirmModal = document.getElementById('confirm-modal');
+    elements.closeButtons = document.querySelectorAll('.close-btn');
+    elements.addSiteForm = document.getElementById('add-site-form');
+    elements.categoryTags = document.getElementById('category-tags');
+    elements.mainContent = document.getElementById('main-content');
+    elements.emptyState = document.getElementById('empty-state');
+    elements.searchResultInfo = document.getElementById('search-result-info');
+    elements.resultCount = document.getElementById('result-count');
+    elements.clearSearchBtn = document.getElementById('clear-search');
+    elements.pageLoader = document.getElementById('page-loader');
+    elements.toast = document.getElementById('toast');
+
+    // 初始化事件监听
     initializeEventListeners();
-    // ... existing initialization code ...
+    
+    // 初始化搜索功能
+    elements.searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderSites();
+    });
+
+    elements.clearSearchBtn.addEventListener('click', () => {
+        elements.searchInput.value = '';
+        searchQuery = '';
+        renderSites();
+    });
+
+    // 初始化分类标签
+    elements.categoryTags.addEventListener('click', (e) => {
+        if (e.target.classList.contains('category-tag')) {
+            document.querySelectorAll('.category-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            currentCategory = e.target.dataset.category;
+            renderSites();
+        }
+    });
+
+    // 初始化添加网站表单
+    elements.addSiteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newSite = {
+            name: document.getElementById('site-name').value,
+            url: document.getElementById('site-url').value,
+            category: document.getElementById('site-category').value,
+            icon: 'bi-link-45deg'
+        };
+        sites.push(newSite);
+        localStorage.setItem('sites', JSON.stringify(sites));
+        elements.addSiteModal.style.display = 'none';
+        elements.addSiteForm.reset();
+        renderSites();
+        showToast('网站添加成功！', 'success');
+    });
+
+    // 初始化收藏夹
+    initializeFavorites();
+    
+    // 初始化主题
+    initializeTheme();
+    
+    // 渲染网站列表
+    renderSites();
+    
+    // 隐藏加载器
+    elements.pageLoader.style.display = 'none';
 });
 
 // 渲染分类标签
