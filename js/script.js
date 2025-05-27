@@ -737,7 +737,12 @@ const elements = {
     clearSearchBtn: null,
     resetSearchBtn: null,
     pageLoader: null,
-    toast: null
+    toast: null,
+    aboutSiteBtn: null,
+    aboutModal: null,
+    submitSiteBtn: null,
+    submitModal: null,
+    submitSiteForm: null
 };
 
 // 主题配置
@@ -1043,6 +1048,12 @@ function initializeEventListeners() {
     elements.emptyState = document.getElementById('empty-state');
     elements.searchResultInfo = document.getElementById('search-result-info');
     elements.resultCount = document.getElementById('result-count');
+    
+    elements.aboutSiteBtn = document.getElementById('about-site');
+    elements.aboutModal = document.getElementById('about-modal');
+    elements.submitSiteBtn = document.getElementById('submit-site');
+    elements.submitModal = document.getElementById('submit-modal');
+    elements.submitSiteForm = document.getElementById('submit-site-form');
 
     if (elements.searchInput && elements.searchBtn) {
         elements.searchInput.addEventListener('input', function() {
@@ -1133,6 +1144,43 @@ function initializeEventListeners() {
         });
         elements.accentColorPicker.addEventListener('change', function() {
             applyCustomColors(elements.primaryColorPicker.value, this.value);
+        });
+    }
+    
+    if (elements.aboutSiteBtn && elements.aboutModal) {
+        elements.aboutSiteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            elements.aboutModal.style.display = 'block';
+        });
+    }
+    
+    if (elements.submitSiteBtn && elements.submitModal) {
+        elements.submitSiteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            elements.submitModal.style.display = 'block';
+        });
+    }
+    
+    if (elements.submitSiteForm) {
+        elements.submitSiteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('submit-name').value.trim();
+            const url = document.getElementById('submit-url').value.trim();
+            const category = document.getElementById('submit-category').value;
+            const description = document.getElementById('submit-description').value.trim();
+            const contact = document.getElementById('submit-contact').value.trim();
+            
+            if (!name || !url || !category) {
+                showToast('请填写必要信息', 'error');
+                return;
+            }
+            
+            // 这里可以添加发送申请到服务器的代码
+            // 由于是本地运行，我们只显示一个成功提示
+            showToast('申请已提交，感谢您的贡献！', 'success');
+            elements.submitModal.style.display = 'none';
+            e.target.reset();
         });
     }
     
