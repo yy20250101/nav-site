@@ -222,3 +222,27 @@ const initialSites = [
         icon: 'bi-music-note-beamed'
     }
 ];
+
+// 网站分类数据
+const categories = [
+    { id: 'all', name: '全部', icon: 'bi-grid-fill' },
+    { id: 'common', name: '常用', icon: 'bi-star-fill' },
+    { id: 'tools', name: '工具', icon: 'bi-tools' },
+    { id: 'ai', name: 'AI工具', icon: 'bi-robot' },
+    { id: 'learning', name: '学习', icon: 'bi-book' },
+    { id: 'entertainment', name: '娱乐', icon: 'bi-play-circle' },
+    { id: 'dev', name: '开发', icon: 'bi-code-square' },
+    { id: 'design', name: '设计', icon: 'bi-palette' },
+    { id: 'social', name: '社交', icon: 'bi-people' }
+];
+
+// 渲染分类标签
+function renderCategories() {
+    const categoryTags = document.getElementById('category-tags');
+    categoryTags.innerHTML = categories.map(category => `
+        <div class="category-tag ${currentCategory === category.id ? 'active' : ''}" data-category="${category.id}">
+            <i class="bi ${category.icon}"></i>
+            ${category.name}
+        </div>
+    `).join('');
+}

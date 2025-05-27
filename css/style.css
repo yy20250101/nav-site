@@ -343,12 +343,55 @@ header {
     }
 
     .sites-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .site-card {
+        padding: 15px;
     }
 
     .floating-btn {
         right: 20px;
         bottom: 20px;
+    }
+
+    .category-tags {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .category-tag {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .search-container {
+        width: 90%;
+        margin: 10px auto;
+    }
+
+    #search-input {
+        font-size: 14px;
+    }
+
+    .header {
+        padding: 15px 10px;
+    }
+
+    .site-name {
+        font-size: 14px;
+    }
+}
+
+/* 平板设备优化 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sites-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
     }
 }
 
