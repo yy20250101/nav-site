@@ -1114,83 +1114,105 @@ function initializeEventListeners() {
 // 渲染网站列表
 function renderSites() {
     const mainContent = document.getElementById('main-content');
-    const searchQuery = document.getElementById('search-input').value.toLowerCase();
+    if (!mainContent) return;
     
-    // 按分类对网站进行分组
-    const sitesByCategory = {};
-    sites.forEach(site => {
-        if (!sitesByCategory[site.category]) {
-            sitesByCategory[site.category] = [];
-        }
-        if (!searchQuery || 
+    const searchQuery = (document.getElementById('search-input')?.value || '').toLowerCase();
+    let filteredSites = sites;
+    
+    // 搜索过滤
+    if (searchQuery) {
+        filteredSites = sites.filter(site => 
             site.name.toLowerCase().includes(searchQuery) || 
-            site.url.toLowerCase().includes(searchQuery)) {
-            sitesByCategory[site.category].push(site);
-        }
-    });
-
-    // 清空主内容区
-    const sitesContainer = mainContent.querySelector('.sites-container');
-    sitesContainer.innerHTML = '';
-
-    // 按分类渲染网站
-    let hasContent = false;
-    categories.forEach(category => {
-        const sitesInCategory = sitesByCategory[category.id] || [];
-        if (sitesInCategory.length > 0) {
-            hasContent = true;
-            
-            // 添加分类标题
-            const categoryTitle = document.createElement('h2');
-            categoryTitle.className = 'category-title';
-            categoryTitle.innerHTML = `<i class="bi ${category.icon}"></i> ${category.name}`;
-            sitesContainer.appendChild(categoryTitle);
-
-            // 添加网站卡片容器
-            const categoryContainer = document.createElement('div');
-            categoryContainer.className = 'sites-grid';
-            categoryContainer.style.display = 'grid';
-            categoryContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
-            categoryContainer.style.gap = '20px';
-            categoryContainer.style.marginBottom = '30px';
-
-            // 渲染该分类下的网站卡片
-            sitesInCategory.forEach(site => {
-                const card = document.createElement('a');
-                card.href = site.url;
-                card.target = '_blank';
-                card.className = 'site-card';
-                card.innerHTML = renderSiteCard(site);
-                categoryContainer.appendChild(card);
-            });
-
-            sitesContainer.appendChild(categoryContainer);
-        }
-    });
-
-    // 显示/隐藏空状态
-    document.getElementById('empty-state').style.display = hasContent ? 'none' : 'block';
-
+            site.url.toLowerCase().includes(searchQuery)
+        );
+    }
+    
+    // 分类过滤
+    if (currentCategory && currentCategory !== 'all') {
+        filteredSites = filteredSites.filter(site => site.category === currentCategory);
+    }
+    
     // 更新搜索结果信息
     const searchResultInfo = document.getElementById('search-result-info');
-    if (searchQuery) {
-        const totalResults = Object.values(sitesByCategory).reduce((sum, sites) => sum + sites.length, 0);
-        document.getElementById('result-count').textContent = totalResults;
-        searchResultInfo.style.display = 'flex';
+    const resultCount = document.getElementById('result-count');
+    if (searchResultInfo && resultCount) {
+        resultCount.textContent = filteredSites.length;
+        searchResultInfo.style.display = searchQuery ? 'flex' : 'none';
+    }
+    
+    // 显示空状态或渲染网站列表
+    const emptyState = document.getElementById('empty-state');
+    if (filteredSites.length === 0) {
+        mainContent.innerHTML = '';
+        emptyState.style.display = 'block';
     } else {
-        searchResultInfo.style.display = 'none';
+        emptyState.style.display = 'none';
+        
+        // 按分类分组
+        const sitesByCategory = {};
+        filteredSites.forEach(site => {
+            if (!sitesByCategory[site.category]) {
+                sitesByCategory[site.category] = [];
+            }
+            sitesByCategory[site.category].push(site);
+        });
+        
+        // 渲染分组后的网站
+        let html = '';
+        categories.forEach(category => {
+            const sitesInCategory = sitesByCategory[category.id] || [];
+            if (sitesInCategory.length > 0) {
+                html += `
+                    <div class="category-section">
+                        <h2 class="category-title">
+                            <i class="bi ${category.icon}"></i>
+                            ${category.name}
+                        </h2>
+                        <div class="sites-grid">
+                            ${sitesInCategory.map(site => renderSiteCard(site)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        mainContent.innerHTML = html;
     }
 }
 
 // 渲染分类标签
 function renderCategories() {
     const categoryTags = document.getElementById('category-tags');
-    categoryTags.innerHTML = categories.map(category => `
-        <button class="category-tag" data-category="${category.id}">
+    if (!categoryTags) return;
+    
+    // 添加"全部"分类
+    const allCategoriesHtml = `
+        <button class="category-tag ${currentCategory === 'all' ? 'active' : ''}" data-category="all">
+            <i class="bi bi-grid"></i>
+            全部
+        </button>
+    `;
+    
+    // 渲染其他分类
+    const categoriesHtml = categories.map(category => `
+        <button class="category-tag ${currentCategory === category.id ? 'active' : ''}" 
+                data-category="${category.id}">
             <i class="bi ${category.icon}"></i>
             ${category.name}
         </button>
     `).join('');
+    
+    categoryTags.innerHTML = allCategoriesHtml + categoriesHtml;
+    
+    // 添加点击事件
+    categoryTags.querySelectorAll('.category-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            currentCategory = tag.dataset.category;
+            renderSites();
+        });
+    });
 }
 
 // 导入导出功能
@@ -1245,13 +1267,55 @@ function applyCustomColors(primary, accent) {
     localStorage.setItem('custom-accent-color', accent);
 }
 
-// 初始化
+// 初始化函数
 document.addEventListener('DOMContentLoaded', function() {
-    // 初始化网站数据
+    // 检查是否是首次访问
+    const isFirstVisit = !localStorage.getItem('sites');
+    
+    // 如果是首次访问，初始化数据
+    if (isFirstVisit) {
+        // 保存初始网站数据
+        localStorage.setItem('sites', JSON.stringify(initialSites));
+        // 初始化收藏夹
+        localStorage.setItem('favorites', JSON.stringify([]));
+        // 初始化主题
+        localStorage.setItem('theme', 'default');
+    }
+    
+    // 从本地存储加载数据
     sites = JSON.parse(localStorage.getItem('sites')) || initialSites;
-    localStorage.setItem('sites', JSON.stringify(sites));
+    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    currentTheme = localStorage.getItem('theme') || 'default';
     
     // 初始化DOM元素
+    initializeElements();
+    
+    // 初始化事件监听
+    initializeEventListeners();
+    
+    // 初始化主题
+    initializeTheme();
+    
+    // 初始化收藏夹
+    initializeFavorites();
+    
+    // 渲染分类标签
+    renderCategories();
+    
+    // 渲染网站列表
+    renderSites();
+    
+    // 隐藏加载器
+    document.getElementById('page-loader').style.display = 'none';
+    
+    // 如果是首次访问，显示欢迎提示
+    if (isFirstVisit) {
+        showToast('欢迎使用六月天导航！', 'success');
+    }
+});
+
+// 初始化DOM元素
+function initializeElements() {
     elements.searchInput = document.getElementById('search-input');
     elements.searchBtn = document.getElementById('search-btn');
     elements.addSiteBtn = document.getElementById('add-site-btn');
@@ -1268,84 +1332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.clearSearchBtn = document.getElementById('clear-search');
     elements.pageLoader = document.getElementById('page-loader');
     elements.toast = document.getElementById('toast');
-
-    // 初始化事件监听
-    initializeEventListeners();
-    
-    // 初始化搜索功能
-    elements.searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value.trim();
-        renderSites();
-    });
-
-    elements.clearSearchBtn.addEventListener('click', () => {
-        elements.searchInput.value = '';
-        searchQuery = '';
-        renderSites();
-    });
-
-    // 初始化分类标签
-    elements.categoryTags.addEventListener('click', (e) => {
-        if (e.target.classList.contains('category-tag')) {
-            document.querySelectorAll('.category-tag').forEach(tag => {
-                tag.classList.remove('active');
-            });
-            e.target.classList.add('active');
-            currentCategory = e.target.dataset.category;
-            renderSites();
-        }
-    });
-
-    // 添加网站按钮事件
-    const addSiteBtn = document.getElementById('add-site-btn');
-    const addSiteModal = document.getElementById('add-site-modal');
-    const addSiteForm = document.getElementById('add-site-form');
-
-    // 打开添加网站模态框
-    addSiteBtn.addEventListener('click', () => {
-        addSiteModal.style.display = 'block';
-    });
-
-    // 关闭模态框
-    document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.closest('.modal').style.display = 'none';
-        });
-    });
-
-    // 点击模态框外部关闭
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    });
-
-    // 添加网站表单提交
-    addSiteForm.addEventListener('submit', handleAddSite);
-
-    // 添加URL输入实时验证
-    const urlInput = document.getElementById('site-url');
-    urlInput.addEventListener('input', () => {
-        try {
-            new URL(urlInput.value);
-            urlInput.setCustomValidity('');
-        } catch (e) {
-            urlInput.setCustomValidity('请输入有效的网址');
-        }
-    });
-
-    // 初始化收藏夹
-    initializeFavorites();
-    
-    // 初始化主题
-    initializeTheme();
-    
-    // 渲染网站列表
-    renderSites();
-    
-    // 隐藏加载器
-    elements.pageLoader.style.display = 'none';
-});
+}
 
 // 显示提示信息
 function showToast(message, type = 'info') {

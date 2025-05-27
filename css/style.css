@@ -98,75 +98,91 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
-    flex: 1;
 }
 
 /* 头部样式 */
 header {
     text-align: center;
-    padding: 20px 0;
+    padding: 30px 0;
+    background-color: var(--card-bg-color);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 30px;
 }
 
 .logo h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: var(--primary-color);
-    margin: 0 0 20px 0;
+    margin-bottom: 20px;
 }
 
 /* 搜索框样式 */
-.search-box {
-    max-width: 600px;
+.search-container {
+    max-width: 800px;
     margin: 0 auto;
-    position: relative;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 30px;
+    padding: 5px;
+    margin-bottom: 10px;
 }
 
 #search-input {
-    width: 100%;
-    padding: 12px 40px 12px 15px;
-    border: 2px solid var(--primary-color);
-    border-radius: 24px;
+    flex: 1;
+    border: none;
+    padding: 12px 20px;
     font-size: 16px;
-    outline: none;
+    background: none;
+    color: var(--text-color);
 }
 
 #search-btn {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
+    background-color: var(--primary-color);
+    color: white;
     border: none;
-    color: var(--primary-color);
+    padding: 12px 25px;
+    border-radius: 25px;
     cursor: pointer;
-    padding: 10px;
+    transition: all var(--transition-speed);
+}
+
+#search-btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-1px);
 }
 
 /* 分类导航样式 */
 .category-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
+    gap: 12px;
+    margin: 30px 0;
     justify-content: center;
+    padding: 20px;
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
 }
 
 .category-tag {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    background-color: var(--card-bg-color);
+    background-color: var(--background-color);
     color: var(--text-color);
     border-radius: 20px;
     cursor: pointer;
     transition: all var(--transition-speed);
-    font-size: 14px;
+    font-size: 15px;
     display: flex;
     align-items: center;
-    gap: 5px;
-    box-shadow: var(--shadow-sm);
+    gap: 8px;
 }
 
 .category-tag:hover,
@@ -181,27 +197,29 @@ header {
 }
 
 /* 网站卡片样式 */
-.sites-container {
+.sites-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-    padding: 20px 0;
+    margin-top: 20px;
 }
 
 .site-card {
     background-color: var(--card-bg-color);
     border-radius: var(--border-radius);
-    padding: 15px;
+    padding: 20px;
     text-align: center;
     text-decoration: none;
     color: var(--text-color);
     transition: all var(--transition-speed);
     box-shadow: var(--shadow-sm);
     position: relative;
+    height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .site-card:hover {
@@ -230,12 +248,19 @@ header {
 }
 
 /* 分类标题样式 */
+.category-section {
+    margin-bottom: 40px;
+}
+
 .category-title {
     font-size: 1.5rem;
     color: var(--text-color);
-    margin: 30px 0 20px;
+    margin-bottom: 20px;
     padding-left: 15px;
     border-left: 4px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* 底部样式 */
@@ -466,7 +491,7 @@ footer {
         -webkit-overflow-scrolling: touch;
     }
 
-    .sites-container {
+    .sites-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         padding: 10px;
@@ -513,7 +538,7 @@ footer {
 
 /* 平板设备优化 */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .sites-container {
+    .sites-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 15px;
     }
@@ -631,4 +656,17 @@ footer {
 .site-favicon,
 .site-icon {
     transition: transform var(--transition-speed);
+}
+
+/* 空状态样式优化 */
+.empty-message {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-message i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--primary-color);
 } 
