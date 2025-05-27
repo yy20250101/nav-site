@@ -751,63 +751,23 @@ const themes = [
 
 // 主题切换功能
 function initializeTheme() {
+    // 应用保存的主题
     const savedTheme = localStorage.getItem('theme') || 'default';
     applyTheme(savedTheme);
-    
-    // 添加主题切换按钮到头部
-    const header = document.querySelector('header');
-    const themeBtn = document.createElement('button');
-    themeBtn.className = 'theme-btn';
-    themeBtn.innerHTML = `<i class="bi ${themes.find(t => t.id === savedTheme)?.icon || 'bi-sun'}"></i>`;
-    header.appendChild(themeBtn);
-    
-    // 创建主题选择菜单
-    const themeMenu = document.createElement('div');
-    themeMenu.className = 'theme-menu';
-    themeMenu.innerHTML = themes.map(theme => `
-        <div class="theme-option ${theme.id === savedTheme ? 'active' : ''}" data-theme="${theme.id}">
-            <i class="bi ${theme.icon}"></i>
-            <span>${theme.name}</span>
-        </div>
-    `).join('');
-    document.body.appendChild(themeMenu);
-    
-    // 主题按钮点击事件
-    themeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        themeMenu.classList.toggle('show');
-    });
-    
-    // 主题选择事件
-    themeMenu.addEventListener('click', (e) => {
-        const themeOption = e.target.closest('.theme-option');
-        if (themeOption) {
-            const theme = themeOption.dataset.theme;
-            applyTheme(theme);
-            themeMenu.classList.remove('show');
-            showToast('主题切换成功！', 'success');
-        }
-    });
-    
-    // 点击其他地方关闭主题菜单
-    document.addEventListener('click', () => {
-        themeMenu.classList.remove('show');
-    });
 }
 
 function applyTheme(theme) {
     document.body.className = `${theme}-theme`;
     localStorage.setItem('theme', theme);
-    
-    // 更新主题按钮图标
-    const themeBtn = document.querySelector('.theme-btn');
-    if (themeBtn) {
-        themeBtn.innerHTML = `<i class="bi ${themes.find(t => t.id === theme)?.icon || 'bi-sun'}"></i>`;
-    }
+    currentTheme = theme;
     
     // 更新主题选项的激活状态
     document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.toggle('active', option.dataset.theme === theme);
+        if (option.dataset.theme === theme) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
     });
 }
 
@@ -1069,6 +1029,8 @@ function renderSiteCard(site) {
 
 // 事件监听器
 function initializeEventListeners() {
+    console.log("开始初始化事件监听器");
+    
     // 搜索功能
     if (elements.searchInput && elements.searchBtn) {
         elements.searchInput.addEventListener('input', function() {
@@ -1100,57 +1062,74 @@ function initializeEventListeners() {
         });
     }
     
-    // 添加网站按钮
-    if (elements.addSiteBtn && elements.addSiteModal) {
-        elements.addSiteBtn.addEventListener('click', function() {
-            elements.addSiteModal.style.display = 'block';
+    // 浮动按钮 - 添加网站
+    const addSiteBtn = document.getElementById('add-site-btn');
+    const addSiteModal = document.getElementById('add-site-modal');
+    if (addSiteBtn && addSiteModal) {
+        console.log("绑定添加网站按钮事件");
+        addSiteBtn.addEventListener('click', function() {
+            addSiteModal.style.display = 'block';
         });
     }
     
     // 添加网站表单提交
-    if (elements.addSiteForm) {
-        elements.addSiteForm.addEventListener('submit', handleAddSite);
+    const addSiteForm = document.getElementById('add-site-form');
+    if (addSiteForm) {
+        addSiteForm.addEventListener('submit', handleAddSite);
     }
     
-    // 收藏夹按钮
-    if (elements.favoritesBtn && elements.favoritesModal) {
-        elements.favoritesBtn.addEventListener('click', function() {
+    // 浮动按钮 - 收藏夹
+    const favoritesBtn = document.getElementById('favorites-btn');
+    const favoritesModal = document.getElementById('favorites-modal');
+    if (favoritesBtn && favoritesModal) {
+        console.log("绑定收藏夹按钮事件");
+        favoritesBtn.addEventListener('click', function() {
             renderFavorites();
-            elements.favoritesModal.style.display = 'block';
+            favoritesModal.style.display = 'block';
         });
     }
     
-    // 导入导出按钮
-    if (elements.importExportBtn && elements.importExportModal) {
-        elements.importExportBtn.addEventListener('click', function() {
-            elements.importExportModal.style.display = 'block';
+    // 浮动按钮 - 导入导出
+    const importExportBtn = document.getElementById('import-export-btn');
+    const importExportModal = document.getElementById('import-export-modal');
+    if (importExportBtn && importExportModal) {
+        console.log("绑定导入导出按钮事件");
+        importExportBtn.addEventListener('click', function() {
+            importExportModal.style.display = 'block';
         });
     }
     
     // 导出按钮
-    if (elements.exportBtn) {
-        elements.exportBtn.addEventListener('click', exportData);
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportData);
     }
     
     // 导入按钮
-    if (elements.importBtn && elements.importFile) {
-        elements.importBtn.addEventListener('click', function() {
-            elements.importFile.click();
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+    if (importBtn && importFile) {
+        importBtn.addEventListener('click', function() {
+            importFile.click();
         });
         
-        elements.importFile.addEventListener('change', function(e) {
+        importFile.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 importData(e.target.files[0]);
             }
         });
     }
     
-    // 主题按钮
-    if (elements.themeBtn && elements.themeSettingsModal) {
-        elements.themeBtn.addEventListener('click', function() {
+    // 浮动按钮 - 主题设置
+    const themeBtn = document.getElementById('theme-btn');
+    const themeSettingsModal = document.getElementById('theme-settings-modal');
+    const themeOptions = document.querySelector('.theme-options');
+    if (themeBtn && themeSettingsModal) {
+        console.log("绑定主题按钮事件");
+        themeBtn.addEventListener('click', function() {
             // 生成主题选项
-            if (elements.themeOptions) {
-                elements.themeOptions.innerHTML = themes.map(theme => `
+            if (themeOptions) {
+                themeOptions.innerHTML = themes.map(theme => `
                     <div class="theme-option ${theme.id === currentTheme ? 'active' : ''}" data-theme="${theme.id}">
                         <i class="bi ${theme.icon}"></i>
                         <span>${theme.name}</span>
@@ -1167,28 +1146,31 @@ function initializeEventListeners() {
                 });
             }
             
-            elements.themeSettingsModal.style.display = 'block';
+            themeSettingsModal.style.display = 'block';
         });
     }
     
     // 自定义颜色选择器
-    if (elements.primaryColorPicker && elements.accentColorPicker) {
+    const primaryColorPicker = document.getElementById('primary-color');
+    const accentColorPicker = document.getElementById('accent-color');
+    if (primaryColorPicker && accentColorPicker) {
         // 加载保存的自定义颜色
-        elements.primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
-        elements.accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
+        primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
+        accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
         
-        elements.primaryColorPicker.addEventListener('change', function() {
-            applyCustomColors(this.value, elements.accentColorPicker.value);
+        primaryColorPicker.addEventListener('change', function() {
+            applyCustomColors(this.value, accentColorPicker.value);
         });
         
-        elements.accentColorPicker.addEventListener('change', function() {
-            applyCustomColors(elements.primaryColorPicker.value, this.value);
+        accentColorPicker.addEventListener('change', function() {
+            applyCustomColors(primaryColorPicker.value, this.value);
         });
     }
     
     // 关闭按钮
-    if (elements.closeButtons) {
-        elements.closeButtons.forEach(btn => {
+    const closeButtons = document.querySelectorAll('.close-btn');
+    if (closeButtons.length > 0) {
+        closeButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const modal = this.closest('.modal');
                 if (modal) modal.style.display = 'none';
@@ -1236,6 +1218,8 @@ function initializeEventListeners() {
             }
         }
     });
+    
+    console.log("事件监听器初始化完成");
 }
 
 // 渲染网站列表
@@ -1396,6 +1380,8 @@ function applyCustomColors(primary, accent) {
 
 // 初始化函数
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM加载完成，开始初始化");
+    
     // 检查是否是首次访问
     const isFirstVisit = !localStorage.getItem('sites');
     
@@ -1414,69 +1400,24 @@ document.addEventListener('DOMContentLoaded', function() {
     favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     currentTheme = localStorage.getItem('theme') || 'default';
     
+    // 应用当前主题
+    document.body.className = `${currentTheme}-theme`;
+    
     // 初始化DOM元素
-    initializeElements();
-});
-
-// 初始化DOM元素
-function initializeElements() {
-    // 显示加载动画
     const loader = document.getElementById('page-loader');
     if (loader) loader.style.display = 'flex';
-
-    // 初始化所有DOM元素引用
-    elements.searchInput = document.getElementById('search-input');
-    elements.searchBtn = document.getElementById('search-btn');
-    elements.addSiteBtn = document.getElementById('add-site-btn');
-    elements.addSiteModal = document.getElementById('add-site-modal');
-    elements.closeButtons = document.querySelectorAll('.close-btn');
-    elements.addSiteForm = document.getElementById('add-site-form');
-    elements.categoryTags = document.getElementById('category-tags');
-    elements.mainContent = document.getElementById('main-content');
-    elements.emptyState = document.getElementById('empty-state');
-    elements.searchResultInfo = document.getElementById('search-result-info');
-    elements.resultCount = document.getElementById('result-count');
-    elements.clearSearchBtn = document.getElementById('clear-search');
-    elements.resetSearchBtn = document.getElementById('reset-search');
-    elements.pageLoader = loader;
-    elements.toast = document.getElementById('toast');
-    elements.favoritesBtn = document.getElementById('favorites-btn');
-    elements.favoritesModal = document.getElementById('favorites-modal');
-    elements.favoritesList = document.querySelector('.favorites-list');
-    elements.importExportBtn = document.getElementById('import-export-btn');
-    elements.importExportModal = document.getElementById('import-export-modal');
-    elements.exportBtn = document.getElementById('export-btn');
-    elements.importBtn = document.getElementById('import-btn');
-    elements.importFile = document.getElementById('import-file');
-    elements.themeBtn = document.getElementById('theme-btn');
-    elements.themeSettingsModal = document.getElementById('theme-settings-modal');
-    elements.themeOptions = document.querySelector('.theme-options');
-    elements.primaryColorPicker = document.getElementById('primary-color');
-    elements.accentColorPicker = document.getElementById('accent-color');
-
-    // 异步初始化所有数据
-    Promise.all([
-        // 从localStorage加载主题设置
-        new Promise(resolve => {
-            initializeTheme();
-            resolve();
-        }),
-        // 从localStorage加载收藏夹数据
-        new Promise(resolve => {
-            initializeFavorites();
-            resolve();
-        }),
+    
+    // 初始化网站数据和事件监听
+    try {
+        // 初始化收藏夹
+        initializeFavorites();
+        
         // 渲染分类标签
-        new Promise(resolve => {
-            renderCategories();
-            resolve();
-        }),
+        renderCategories();
+        
         // 渲染网站列表
-        new Promise(resolve => {
-            renderSites();
-            resolve();
-        })
-    ]).then(() => {
+        renderSites();
+        
         // 初始化事件监听
         initializeEventListeners();
         
@@ -1492,23 +1433,33 @@ function initializeElements() {
         showToast('网站加载完成', 'success');
         
         // 如果是首次访问，显示欢迎提示
-        if (!localStorage.getItem('visited')) {
-            localStorage.setItem('visited', 'true');
+        if (isFirstVisit) {
             showToast('欢迎使用六月天导航！', 'success');
         }
-    }).catch(error => {
+    } catch (error) {
         console.error('初始化失败:', error);
         showToast('加载失败，请刷新重试', 'error');
-    });
-}
+        
+        // 隐藏加载动画
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }
+    
+    console.log("初始化完成");
+});
 
 // 显示提示信息
 function showToast(message, type = 'info') {
-const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = `toast show ${type}`;
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    } else {
+        console.error('Toast元素不存在');
+    }
 }
