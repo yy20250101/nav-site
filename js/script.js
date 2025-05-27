@@ -13,7 +13,7 @@ const categories = [
     { id: 'learning', name: '学习', icon: 'bi-book' }
 ];
 
-// 初始网站数据
+// 初始网站数据 (恢复为爱路导航风格的完整数据)
 const initialSites = [
     // 搜索类
     {
@@ -751,7 +751,6 @@ const themes = [
 
 // 主题切换功能
 function initializeTheme() {
-    // 应用保存的主题
     const savedTheme = localStorage.getItem('theme') || 'default';
     applyTheme(savedTheme);
 }
@@ -761,7 +760,6 @@ function applyTheme(theme) {
     localStorage.setItem('theme', theme);
     currentTheme = theme;
     
-    // 更新主题选项的激活状态
     document.querySelectorAll('.theme-option').forEach(option => {
         if (option.dataset.theme === theme) {
             option.classList.add('active');
@@ -773,25 +771,21 @@ function applyTheme(theme) {
 
 // 收藏夹功能
 function initializeFavorites() {
-    // 从本地存储加载收藏夹数据
     favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 }
 
 function toggleFavorite(site) {
     const index = favorites.findIndex(f => f.url === site.url);
     if (index === -1) {
-        // 添加到收藏
         favorites.push(site);
         showToast('已添加到收藏！', 'success');
     } else {
-        // 从收藏中移除
         favorites.splice(index, 1);
         showToast('已从收藏中移除', 'success');
     }
     localStorage.setItem('favorites', JSON.stringify(favorites));
-    renderSites(); // 更新网站列表中的收藏状态
+    renderSites(); 
     
-    // 如果收藏夹模态框是打开的，更新收藏夹列表
     if (elements.favoritesModal && elements.favoritesModal.style.display === 'block') {
         renderFavorites();
     }
@@ -832,7 +826,6 @@ function renderFavorites() {
     
     elements.favoritesList.innerHTML = html;
     
-    // 添加移除收藏按钮的点击事件
     elements.favoritesList.querySelectorAll('.remove-favorite').forEach(btn => {
         btn.addEventListener('click', function() {
             const siteData = this.dataset.site;
@@ -846,7 +839,6 @@ function renderFavorites() {
 // 获取网站图标的函数
 async function getFavicon(url) {
     try {
-        // 解析URL
         let domain;
         try {
             domain = new URL(url).hostname;
@@ -855,32 +847,26 @@ async function getFavicon(url) {
             return null;
         }
 
-        // 尝试Google Favicon API
         const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
         
-        // 创建图像对象检查图标是否可用
         return new Promise((resolve) => {
             const img = new Image();
             
             img.onload = function() {
-                // 检查图像是否是默认图标（通常是1x1像素）
                 if (this.width > 1 && this.height > 1) {
                     resolve(googleFaviconUrl);
                 } else {
-                    // 尝试直接从网站获取favicon
                     tryDirectFavicon(url, resolve);
                 }
             };
             
             img.onerror = function() {
-                // 尝试直接从网站获取favicon
                 tryDirectFavicon(url, resolve);
             };
             
-            // 设置超时
             setTimeout(() => {
                 if (!img.complete) {
-                    img.src = ''; // 取消加载
+                    img.src = ''; 
                     tryDirectFavicon(url, resolve);
                 }
             }, 3000);
@@ -906,14 +892,12 @@ function tryDirectFavicon(url, resolve) {
         };
         
         img.onerror = function() {
-            // 所有尝试都失败，返回null
             resolve(null);
         };
         
-        // 设置超时
         setTimeout(() => {
             if (!img.complete) {
-                img.src = ''; // 取消加载
+                img.src = ''; 
                 resolve(null);
             }
         }, 3000);
@@ -943,7 +927,7 @@ async function handleAddSite(e) {
     // 验证URL格式
     try {
         new URL(url);
-        } catch (e) {
+    } catch (e) {
         showToast('请输入有效的网址', 'error');
         return;
     }
@@ -1031,20 +1015,46 @@ function renderSiteCard(site) {
 function initializeEventListeners() {
     console.log("开始初始化事件监听器");
     
-    // 搜索功能
+    elements.searchInput = document.getElementById('search-input');
+    elements.searchBtn = document.getElementById('search-btn');
+    elements.clearSearchBtn = document.getElementById('clear-search-btn');
+    elements.resetSearchBtn = document.getElementById('reset-search-btn'); // Assuming this ID exists if used
+    elements.addSiteBtn = document.getElementById('add-site-btn');
+    elements.addSiteModal = document.getElementById('add-site-modal');
+    elements.addSiteForm = document.getElementById('add-site-form');
+    elements.favoritesBtn = document.getElementById('favorites-btn');
+    elements.favoritesModal = document.getElementById('favorites-modal');
+    elements.favoritesList = document.querySelector('.favorites-list');
+    elements.importExportBtn = document.getElementById('import-export-btn');
+    elements.importExportModal = document.getElementById('import-export-modal');
+    elements.exportBtn = document.getElementById('export-btn');
+    elements.importBtn = document.getElementById('import-btn');
+    elements.importFile = document.getElementById('import-file');
+    elements.themeBtn = document.getElementById('theme-btn');
+    elements.themeSettingsModal = document.getElementById('theme-settings-modal');
+    elements.themeOptions = document.querySelector('.theme-options');
+    elements.primaryColorPicker = document.getElementById('primary-color');
+    elements.accentColorPicker = document.getElementById('accent-color');
+    elements.closeButtons = document.querySelectorAll('.close-btn');
+    elements.pageLoader = document.getElementById('page-loader');
+    elements.toast = document.getElementById('toast');
+    elements.categoryTags = document.getElementById('category-tags');
+    elements.mainContent = document.getElementById('main-content');
+    elements.emptyState = document.getElementById('empty-state');
+    elements.searchResultInfo = document.getElementById('search-result-info');
+    elements.resultCount = document.getElementById('result-count');
+
     if (elements.searchInput && elements.searchBtn) {
         elements.searchInput.addEventListener('input', function() {
             searchQuery = this.value.trim().toLowerCase();
             renderSites();
         });
-        
         elements.searchBtn.addEventListener('click', function() {
             searchQuery = elements.searchInput.value.trim().toLowerCase();
             renderSites();
         });
     }
     
-    // 清除搜索
     if (elements.clearSearchBtn) {
         elements.clearSearchBtn.addEventListener('click', function() {
             if (elements.searchInput) elements.searchInput.value = '';
@@ -1053,90 +1063,56 @@ function initializeEventListeners() {
         });
     }
     
-    // 重置搜索
-    if (elements.resetSearchBtn) {
-        elements.resetSearchBtn.addEventListener('click', function() {
-            if (elements.searchInput) elements.searchInput.value = '';
-            searchQuery = '';
-            renderSites();
+    // 移除 resetSearchBtn 的逻辑，如果它与 clearSearchBtn 功能重复或不再需要
+    // if (elements.resetSearchBtn) { ... }
+
+    if (elements.addSiteBtn && elements.addSiteModal) {
+        elements.addSiteBtn.addEventListener('click', function() {
+            elements.addSiteModal.style.display = 'block';
         });
     }
     
-    // 浮动按钮 - 添加网站
-    const addSiteBtn = document.getElementById('add-site-btn');
-    const addSiteModal = document.getElementById('add-site-modal');
-    if (addSiteBtn && addSiteModal) {
-        console.log("绑定添加网站按钮事件");
-        addSiteBtn.addEventListener('click', function() {
-            addSiteModal.style.display = 'block';
-        });
+    if (elements.addSiteForm) {
+        elements.addSiteForm.addEventListener('submit', handleAddSite);
     }
     
-    // 添加网站表单提交
-    const addSiteForm = document.getElementById('add-site-form');
-    if (addSiteForm) {
-        addSiteForm.addEventListener('submit', handleAddSite);
-    }
-    
-    // 浮动按钮 - 收藏夹
-    const favoritesBtn = document.getElementById('favorites-btn');
-    const favoritesModal = document.getElementById('favorites-modal');
-    if (favoritesBtn && favoritesModal) {
-        console.log("绑定收藏夹按钮事件");
-        favoritesBtn.addEventListener('click', function() {
+    if (elements.favoritesBtn && elements.favoritesModal) {
+        elements.favoritesBtn.addEventListener('click', function() {
             renderFavorites();
-            favoritesModal.style.display = 'block';
+            elements.favoritesModal.style.display = 'block';
         });
     }
     
-    // 浮动按钮 - 导入导出
-    const importExportBtn = document.getElementById('import-export-btn');
-    const importExportModal = document.getElementById('import-export-modal');
-    if (importExportBtn && importExportModal) {
-        console.log("绑定导入导出按钮事件");
-        importExportBtn.addEventListener('click', function() {
-            importExportModal.style.display = 'block';
+    if (elements.importExportBtn && elements.importExportModal) {
+        elements.importExportBtn.addEventListener('click', function() {
+            elements.importExportModal.style.display = 'block';
         });
     }
     
-    // 导出按钮
-    const exportBtn = document.getElementById('export-btn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', exportData);
+    if (elements.exportBtn) {
+        elements.exportBtn.addEventListener('click', exportData);
     }
     
-    // 导入按钮
-    const importBtn = document.getElementById('import-btn');
-    const importFile = document.getElementById('import-file');
-    if (importBtn && importFile) {
-        importBtn.addEventListener('click', function() {
-            importFile.click();
+    if (elements.importBtn && elements.importFile) {
+        elements.importBtn.addEventListener('click', function() {
+            elements.importFile.click();
         });
-        
-        importFile.addEventListener('change', function(e) {
+        elements.importFile.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 importData(e.target.files[0]);
             }
         });
     }
     
-    // 浮动按钮 - 主题设置
-    const themeBtn = document.getElementById('theme-btn');
-    const themeSettingsModal = document.getElementById('theme-settings-modal');
-    const themeOptions = document.querySelector('.theme-options');
-    if (themeBtn && themeSettingsModal) {
-        console.log("绑定主题按钮事件");
-        themeBtn.addEventListener('click', function() {
-            // 生成主题选项
-            if (themeOptions) {
-                themeOptions.innerHTML = themes.map(theme => `
+    if (elements.themeBtn && elements.themeSettingsModal) {
+        elements.themeBtn.addEventListener('click', function() {
+            if (elements.themeOptions) {
+                elements.themeOptions.innerHTML = themes.map(theme => `
                     <div class="theme-option ${theme.id === currentTheme ? 'active' : ''}" data-theme="${theme.id}">
                         <i class="bi ${theme.icon}"></i>
                         <span>${theme.name}</span>
                     </div>
                 `).join('');
-                
-                // 添加主题选项点击事件
                 document.querySelectorAll('.theme-option').forEach(option => {
                     option.addEventListener('click', function() {
                         const theme = this.dataset.theme;
@@ -1145,32 +1121,23 @@ function initializeEventListeners() {
                     });
                 });
             }
-            
-            themeSettingsModal.style.display = 'block';
+            elements.themeSettingsModal.style.display = 'block';
         });
     }
     
-    // 自定义颜色选择器
-    const primaryColorPicker = document.getElementById('primary-color');
-    const accentColorPicker = document.getElementById('accent-color');
-    if (primaryColorPicker && accentColorPicker) {
-        // 加载保存的自定义颜色
-        primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
-        accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
-        
-        primaryColorPicker.addEventListener('change', function() {
-            applyCustomColors(this.value, accentColorPicker.value);
+    if (elements.primaryColorPicker && elements.accentColorPicker) {
+        elements.primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
+        elements.accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
+        elements.primaryColorPicker.addEventListener('change', function() {
+            applyCustomColors(this.value, elements.accentColorPicker.value);
         });
-        
-        accentColorPicker.addEventListener('change', function() {
-            applyCustomColors(primaryColorPicker.value, this.value);
+        elements.accentColorPicker.addEventListener('change', function() {
+            applyCustomColors(elements.primaryColorPicker.value, this.value);
         });
     }
     
-    // 关闭按钮
-    const closeButtons = document.querySelectorAll('.close-btn');
-    if (closeButtons.length > 0) {
-        closeButtons.forEach(btn => {
+    if (elements.closeButtons.length > 0) {
+        elements.closeButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const modal = this.closest('.modal');
                 if (modal) modal.style.display = 'none';
@@ -1178,7 +1145,6 @@ function initializeEventListeners() {
         });
     }
     
-    // 点击模态框外部关闭
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -1187,7 +1153,6 @@ function initializeEventListeners() {
         });
     });
     
-    // 按ESC键关闭模态框
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal').forEach(modal => {
@@ -1196,9 +1161,7 @@ function initializeEventListeners() {
         }
     });
     
-    // 全局点击事件，用于处理网站卡片点击
     document.addEventListener('click', function(e) {
-        // 处理收藏按钮点击
         if (e.target.closest('.favorite-btn')) {
             e.preventDefault();
             e.stopPropagation();
@@ -1208,8 +1171,6 @@ function initializeEventListeners() {
                 toggleFavorite(JSON.parse(siteData));
             }
         }
-        
-        // 处理网站卡片点击
         const siteCard = e.target.closest('.site-card');
         if (siteCard && !e.target.closest('.site-actions')) {
             const url = siteCard.dataset.url;
@@ -1218,59 +1179,47 @@ function initializeEventListeners() {
             }
         }
     });
-    
     console.log("事件监听器初始化完成");
 }
 
 // 渲染网站列表
 function renderSites() {
-    const mainContent = document.getElementById('main-content');
-    if (!mainContent) return;
+    if (!elements.mainContent) return;
     
-    const currentSearchQuery = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+    const currentSearchQueryVal = (elements.searchInput?.value || '').trim().toLowerCase();
     let filteredSites = sites;
     
-    // 搜索过滤
-    if (currentSearchQuery) {
+    if (currentSearchQueryVal) {
         filteredSites = sites.filter(site => 
-            site.name.toLowerCase().includes(currentSearchQuery) || 
-            site.url.toLowerCase().includes(currentSearchQuery)
+            site.name.toLowerCase().includes(currentSearchQueryVal) || 
+            site.url.toLowerCase().includes(currentSearchQueryVal)
         );
     }
     
-    // 分类过滤
     if (currentCategory && currentCategory !== 'all') {
         filteredSites = filteredSites.filter(site => site.category === currentCategory);
     }
     
-    // 更新搜索结果信息
-    const searchResultInfo = document.getElementById('search-result-info');
-    const resultCount = document.getElementById('result-count');
-    const clearSearchBtn = document.getElementById('clear-search-btn');
-
-    if (searchResultInfo && resultCount && clearSearchBtn) {
-        resultCount.textContent = filteredSites.length;
-        searchResultInfo.style.display = currentSearchQuery ? 'block' : 'none'; 
-        clearSearchBtn.style.display = currentSearchQuery ? 'inline-block' : 'none';
+    if (elements.searchResultInfo && elements.resultCount && elements.clearSearchBtn) {
+        elements.resultCount.textContent = filteredSites.length;
+        elements.searchResultInfo.style.display = currentSearchQueryVal ? 'block' : 'none'; 
+        elements.clearSearchBtn.style.display = currentSearchQueryVal ? 'inline-block' : 'none';
     }
     
-    // 显示空状态或渲染网站列表
-    const emptyState = document.getElementById('empty-state');
-    if (filteredSites.length === 0) {
-        mainContent.innerHTML = ''; 
-        if (emptyState) {
-            emptyState.style.display = 'block';
-            const emptyMessageP = emptyState.querySelector('p');
+    if (elements.emptyState) {
+        if (filteredSites.length === 0) {
+            elements.mainContent.innerHTML = ''; 
+            elements.emptyState.style.display = 'block';
+            const emptyMessageP = elements.emptyState.querySelector('p');
             if (emptyMessageP) {
-                // 如果有搜索词或分类筛选，但结果为空，显示"未找到相关网站"
-                // 如果 sites 数组本身为空（理论上不应发生，因为有 initialSites），也显示此提示
                 emptyMessageP.textContent = '未找到相关网站'; 
             }
+        } else {
+            elements.emptyState.style.display = 'none';
         }
-    } else {
-        if (emptyState) emptyState.style.display = 'none';
-        
-        // 按分类分组
+    }
+    
+    if (filteredSites.length > 0) {
         const sitesByCategory = {};
         filteredSites.forEach(site => {
             if (!sitesByCategory[site.category]) {
@@ -1279,7 +1228,6 @@ function renderSites() {
             sitesByCategory[site.category].push(site);
         });
         
-        // 渲染分组后的网站
         let html = '';
         categories.forEach(category => {
             const sitesInCategory = sitesByCategory[category.id] || [];
@@ -1297,17 +1245,14 @@ function renderSites() {
                 `;
             }
         });
-        
-        mainContent.innerHTML = html;
+        elements.mainContent.innerHTML = html;
     }
 }
 
 // 渲染分类标签
 function renderCategories() {
-    const categoryTags = document.getElementById('category-tags');
-    if (!categoryTags) return;
+    if (!elements.categoryTags) return;
     
-    // 添加"全部"分类
     const allCategoriesHtml = `
         <button class="category-tag ${currentCategory === 'all' ? 'active' : ''}" data-category="all">
             <i class="bi bi-grid"></i>
@@ -1315,7 +1260,6 @@ function renderCategories() {
         </button>
     `;
     
-    // 渲染其他分类
     const categoriesHtml = categories.map(category => `
         <button class="category-tag ${currentCategory === category.id ? 'active' : ''}" 
                 data-category="${category.id}">
@@ -1324,12 +1268,11 @@ function renderCategories() {
         </button>
     `).join('');
     
-    categoryTags.innerHTML = allCategoriesHtml + categoriesHtml;
+    elements.categoryTags.innerHTML = allCategoriesHtml + categoriesHtml;
     
-    // 添加点击事件
-    categoryTags.querySelectorAll('.category-tag').forEach(tag => {
+    elements.categoryTags.querySelectorAll('.category-tag').forEach(tag => {
         tag.addEventListener('click', () => {
-            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+            elements.categoryTags.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
             tag.classList.add('active');
             currentCategory = tag.dataset.category;
             renderSites();
@@ -1344,7 +1287,6 @@ function exportData() {
         favorites: favorites,
         theme: currentTheme
     };
-    
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1354,7 +1296,6 @@ function exportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
     showToast('数据导出成功', 'success');
 }
 
@@ -1363,9 +1304,9 @@ function importData(file) {
     reader.onload = function(e) {
         try {
             const data = JSON.parse(e.target.result);
-            sites = data.sites || sites;
-            favorites = data.favorites || favorites;
-            currentTheme = data.theme || currentTheme;
+            sites = data.sites || []; // Ensure sites is an array
+            favorites = data.favorites || []; // Ensure favorites is an array
+            currentTheme = data.theme || 'default';
             
             localStorage.setItem('sites', JSON.stringify(sites));
             localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -1373,10 +1314,10 @@ function importData(file) {
             
             applyTheme(currentTheme);
             renderSites();
-            renderFavorites();
+            renderFavorites(); // Re-render favorites if modal is open or for consistency
             showToast('数据导入成功', 'success');
         } catch (error) {
-            showToast('导入失败：无效的文件格式');
+            showToast('导入失败：无效的文件格式', 'error');
         }
     };
     reader.readAsText(file);
@@ -1392,83 +1333,70 @@ function applyCustomColors(primary, accent) {
 // 初始化函数
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM加载完成，开始初始化");
-    
-    // 检查是否是首次访问
-    const isFirstVisit = !localStorage.getItem('sites');
-    
-    // 如果是首次访问，初始化数据
-    if (isFirstVisit) {
-        // 保存初始网站数据
-        localStorage.setItem('sites', JSON.stringify(initialSites));
-        // 初始化收藏夹
-        localStorage.setItem('favorites', JSON.stringify([]));
-        // 初始化主题
-        localStorage.setItem('theme', 'default');
+
+    const storedSites = localStorage.getItem('sites');
+    const storedFavorites = localStorage.getItem('favorites');
+    currentTheme = localStorage.getItem('theme') || 'default';
+
+    if (storedSites === null || JSON.parse(storedSites).length === 0) {
+        // 如果本地存储没有数据，或数据为空数组，则使用 initialSites
+        sites = [...initialSites]; // Use a copy of initialSites
+        localStorage.setItem('sites', JSON.stringify(sites));
+        console.log("从 initialSites 初始化数据并存入 localStorage");
+    } else {
+        sites = JSON.parse(storedSites);
+        console.log("从 localStorage 加载 sites 数据");
+    }
+
+    if (storedFavorites === null) {
+        favorites = [];
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    } else {
+        favorites = JSON.parse(storedFavorites);
     }
     
-    // 从本地存储加载数据
-    sites = JSON.parse(localStorage.getItem('sites')) || initialSites;
-    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    currentTheme = localStorage.getItem('theme') || 'default';
-    
-    // 应用当前主题
     document.body.className = `${currentTheme}-theme`;
     
-    // 初始化DOM元素
     const loader = document.getElementById('page-loader');
     if (loader) loader.style.display = 'flex';
     
-    // 初始化网站数据和事件监听
     try {
-        // 初始化收藏夹
-        initializeFavorites();
+        initializeFavorites(); // Initialize favorites array
+        initializeTheme();     // Apply theme
+        initializeEventListeners(); // Setup event listeners for all elements, including those in elements object
         
-        // 渲染分类标签
         renderCategories();
-        
-        // 渲染网站列表
         renderSites();
         
-        // 初始化事件监听
-        initializeEventListeners();
-        
-        // 隐藏加载动画
         if (loader) {
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
             }, 300);
         }
-        
-        // 显示成功提示
         showToast('网站加载完成', 'success');
         
-        // 如果是首次访问，显示欢迎提示
-        if (isFirstVisit) {
-            showToast('欢迎使用六月天导航！', 'success');
+        if (storedSites === null) { // Only show welcome if it was truly the first load with initialSites
+            showToast('欢迎使用个人导航！', 'success');
         }
+
     } catch (error) {
         console.error('初始化失败:', error);
         showToast('加载失败，请刷新重试', 'error');
-        
-        // 隐藏加载动画
         if (loader) {
             loader.style.display = 'none';
         }
     }
-    
     console.log("初始化完成");
 });
 
-// 显示提示信息
 function showToast(message, type = 'info') {
-    const toast = document.getElementById('toast');
-    if (toast) {
-        toast.textContent = message;
-        toast.className = `toast show ${type}`;
-        
+    const toastEl = document.getElementById('toast'); // Renamed to avoid conflict with elements.toast
+    if (toastEl) {
+        toastEl.textContent = message;
+        toastEl.className = `toast show ${type}`;
         setTimeout(() => {
-            toast.classList.remove('show');
+            toastEl.classList.remove('show');
         }, 3000);
     } else {
         console.error('Toast元素不存在');
