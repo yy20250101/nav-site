@@ -1227,14 +1227,14 @@ function renderSites() {
     const mainContent = document.getElementById('main-content');
     if (!mainContent) return;
     
-    const searchQuery = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const currentSearchQuery = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
     let filteredSites = sites;
     
     // 搜索过滤
-    if (searchQuery) {
+    if (currentSearchQuery) {
         filteredSites = sites.filter(site => 
-            site.name.toLowerCase().includes(searchQuery) || 
-            site.url.toLowerCase().includes(searchQuery)
+            site.name.toLowerCase().includes(currentSearchQuery) || 
+            site.url.toLowerCase().includes(currentSearchQuery)
         );
     }
     
@@ -1246,18 +1246,29 @@ function renderSites() {
     // 更新搜索结果信息
     const searchResultInfo = document.getElementById('search-result-info');
     const resultCount = document.getElementById('result-count');
-    if (searchResultInfo && resultCount) {
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+
+    if (searchResultInfo && resultCount && clearSearchBtn) {
         resultCount.textContent = filteredSites.length;
-        searchResultInfo.style.display = searchQuery ? 'flex' : 'none';
+        searchResultInfo.style.display = currentSearchQuery ? 'block' : 'none'; 
+        clearSearchBtn.style.display = currentSearchQuery ? 'inline-block' : 'none';
     }
     
     // 显示空状态或渲染网站列表
     const emptyState = document.getElementById('empty-state');
     if (filteredSites.length === 0) {
-        mainContent.innerHTML = '';
-        emptyState.style.display = 'block';
+        mainContent.innerHTML = ''; 
+        if (emptyState) {
+            emptyState.style.display = 'block';
+            const emptyMessageP = emptyState.querySelector('p');
+            if (emptyMessageP) {
+                // 如果有搜索词或分类筛选，但结果为空，显示"未找到相关网站"
+                // 如果 sites 数组本身为空（理论上不应发生，因为有 initialSites），也显示此提示
+                emptyMessageP.textContent = '未找到相关网站'; 
+            }
+        }
     } else {
-        emptyState.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'none';
         
         // 按分类分组
         const sitesByCategory = {};

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>六月天导航</title>
+    <title>个人导航</title>
     <meta name="description" content="一个简洁美观的个人导航网站，支持多主题切换、本地数据存储、网站分类、搜索等功能。">
     <meta name="keywords" content="导航,网址导航,个人导航,网站导航">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -20,17 +20,16 @@
     <!-- 头部 -->
     <header>
         <div class="logo">
-            <h1>六月天导航</h1>
-            <p class="subtitle">简洁、美观、实用的个人导航</p>
+            <h1>个人导航</h1>
         </div>
         <div class="search-container">
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="搜索网站..." autocomplete="off">
-                <button id="search-btn" aria-label="搜索"><i class="bi bi-search"></i></button>
+                <input type="text" id="search-input" placeholder="搜索网站...">
+                <button id="search-btn"><i class="bi bi-search"></i></button>
             </div>
-            <div id="search-result-info" class="fade-enter">
-                找到 <span id="result-count">0</span> 个结果
-                <button id="clear-search" class="fade-enter"><i class="bi bi-x-circle"></i> 清除搜索</button>
+            <div id="search-result-info" style="display: none;">
+                <span>找到 <span id="result-count">0</span> 个结果</span>
+                <button id="clear-search-btn" class="btn-link">清除搜索</button>
             </div>
         </div>
     </header>
@@ -43,12 +42,9 @@
         <!-- 网站列表 -->
         <div class="sites-container fade-enter">
             <div id="main-content"></div>
-            <div id="empty-state" style="display: none;">
-                <div class="empty-message">
-                    <i class="bi bi-search"></i>
-                    <p>未找到相关网站</p>
-                    <button id="reset-search" class="btn-primary">显示所有网站</button>
-                </div>
+            <div id="empty-state" class="empty-message" style="display: none;">
+                <i class="bi bi-search"></i>
+                <p>未找到相关网站</p>
             </div>
         </div>
     </div>
@@ -166,7 +162,7 @@
 
     <!-- 页脚 -->
     <footer>
-        <p>Copyright © 2024 六月天导航. All Rights Reserved.</p>
+        <p>&copy; 2024 个人导航网站</p>
     </footer>
 
     <script src="js/script.js"></script>
