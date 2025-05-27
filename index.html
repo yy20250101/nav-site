@@ -24,138 +24,45 @@
 
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="搜索网站...">
-                <button id="search-btn" class="icon-btn">
+                <button id="search-btn">
                     <i class="bi bi-search"></i>
-                </button>
-            </div>
-
-            <div class="header-actions">
-                <button id="theme-toggle" class="icon-btn">
-                    <i class="bi bi-moon-stars"></i>
-                </button>
-                <button id="theme-settings-btn" class="icon-btn">
-                    <i class="bi bi-palette"></i>
-                </button>
-                <button id="favorites-btn" class="icon-btn">
-                    <i class="bi bi-star"></i>
-                </button>
-                <button id="import-export-btn" class="icon-btn">
-                    <i class="bi bi-gear"></i>
                 </button>
             </div>
         </header>
 
-        <!-- 分类标签 -->
-        <div id="category-tags" class="category-tags">
-            <button class="category-tag active" data-category="all">全部</button>
-            <button class="category-tag" data-category="common">常用导航</button>
-            <button class="category-tag" data-category="tools">实用工具</button>
-            <button class="category-tag" data-category="ai">AI工具</button>
-            <button class="category-tag" data-category="social">社交媒体</button>
-            <button class="category-tag" data-category="entertainment">影音娱乐</button>
-            <button class="category-tag" data-category="learning">学习资源</button>
-            <button class="category-tag" data-category="dev">开发工具</button>
-        </div>
-
-        <!-- 搜索结果信息 -->
-        <div id="search-result-info" class="search-result-info" style="display: none;">
-            找到 <span id="result-count">0</span> 个结果
-            <button id="clear-search" class="btn-secondary">
-                <i class="bi bi-x"></i> 清除搜索
-            </button>
-        </div>
+        <!-- 分类导航 -->
+        <nav class="category-tags" id="category-tags"></nav>
 
         <!-- 主要内容区 -->
-        <div id="main-content"></div>
-
-        <!-- 空状态 -->
-        <div id="empty-state" class="empty-state" style="display: none;">
-            <i class="bi bi-search"></i>
-            <p>未找到相关网站</p>
-        </div>
-
-        <!-- 添加网站按钮 -->
-        <button id="add-site-btn" class="floating-btn">
-            <i class="bi bi-plus"></i>
-        </button>
-    </div>
-
-    <!-- 主题设置模态框 -->
-    <div id="theme-settings-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>主题设置</h2>
-                <button class="close-btn"><i class="bi bi-x"></i></button>
-            </div>
-            <div class="theme-options">
-                <div class="theme-option" data-theme="default">
-                    <div class="theme-preview default-theme"></div>
-                    <span>默认主题</span>
-                </div>
-                <div class="theme-option" data-theme="dark">
-                    <div class="theme-preview dark-theme"></div>
-                    <span>暗色主题</span>
-                </div>
-                <div class="theme-option" data-theme="ocean">
-                    <div class="theme-preview ocean-theme"></div>
-                    <span>海洋主题</span>
-                </div>
-                <div class="theme-option" data-theme="forest">
-                    <div class="theme-preview forest-theme"></div>
-                    <span>森林主题</span>
-                </div>
-                <div class="theme-option" data-theme="sunset">
-                    <div class="theme-preview sunset-theme"></div>
-                    <span>日落主题</span>
-                </div>
-            </div>
-            <div class="custom-theme-section">
-                <h3>自定义颜色</h3>
-                <div class="color-pickers">
-                    <div class="color-picker">
-                        <label for="primary-color">主要颜色</label>
-                        <input type="color" id="primary-color" value="#4361ee">
-                    </div>
-                    <div class="color-picker">
-                        <label for="accent-color">强调颜色</label>
-                        <input type="color" id="accent-color" value="#7209b7">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 收藏夹模态框 -->
-    <div id="favorites-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>我的收藏</h2>
-                <button class="close-btn"><i class="bi bi-x"></i></button>
-            </div>
-            <div id="favorites-list" class="favorites-list"></div>
-        </div>
-    </div>
-
-    <!-- 导入导出模态框 -->
-    <div id="import-export-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>导入导出</h2>
-                <button class="close-btn"><i class="bi bi-x"></i></button>
-            </div>
-            <div class="import-export-options">
-                <button id="export-btn" class="btn-primary">
-                    <i class="bi bi-download"></i>
-                    导出数据
+        <main id="main-content">
+            <!-- 搜索结果信息 -->
+            <div id="search-result-info" class="search-result-info" style="display: none;">
+                找到 <span id="result-count">0</span> 个结果
+                <button id="clear-search" class="btn-secondary">
+                    <i class="bi bi-x"></i> 清除搜索
                 </button>
-                <button id="import-btn" class="btn-primary">
-                    <i class="bi bi-upload"></i>
-                    导入数据
-                </button>
-                <input type="file" id="import-file" accept=".json" style="display: none;">
             </div>
-        </div>
+
+            <!-- 网站列表 -->
+            <div class="sites-container"></div>
+
+            <!-- 空状态 -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="bi bi-search"></i>
+                <p>未找到相关网站</p>
+            </div>
+        </main>
+
+        <!-- 底部 -->
+        <footer>
+            <p>Copyright © 2024 六月天导航. All Rights Reserved.</p>
+        </footer>
     </div>
+
+    <!-- 添加网站按钮 -->
+    <button id="add-site-btn" class="floating-btn">
+        <i class="bi bi-plus"></i>
+    </button>
 
     <!-- 添加网站模态框 -->
     <div id="add-site-modal" class="modal">
@@ -176,14 +83,16 @@
                 <div class="form-group">
                     <label for="site-category">分类</label>
                     <select id="site-category" required>
-                        <option value="common">常用</option>
-                        <option value="tools">工具</option>
-                        <option value="ai">AI工具</option>
-                        <option value="learning">学习</option>
-                        <option value="entertainment">娱乐</option>
-                        <option value="dev">开发</option>
-                        <option value="design">设计</option>
+                        <option value="search">搜索</option>
+                        <option value="common">常用导航</option>
+                        <option value="netdisk">网盘搜索</option>
+                        <option value="ai">AI</option>
+                        <option value="storage">存储</option>
                         <option value="social">社交</option>
+                        <option value="media">影视音乐</option>
+                        <option value="game">游戏娱乐</option>
+                        <option value="tools">工具</option>
+                        <option value="dev">开发</option>
                     </select>
                 </div>
                 <button type="submit" class="btn-primary">添加</button>

@@ -1,159 +1,567 @@
+// 网站分类数据
+const categories = [
+    { id: 'search', name: '搜索', icon: 'bi-search' },
+    { id: 'common', name: '常用导航', icon: 'bi-star' },
+    { id: 'netdisk', name: '网盘搜索', icon: 'bi-cloud' },
+    { id: 'ai', name: 'AI', icon: 'bi-robot' },
+    { id: 'storage', name: '存储', icon: 'bi-hdd' },
+    { id: 'social', name: '社交', icon: 'bi-people' },
+    { id: 'media', name: '影视音乐', icon: 'bi-play-circle' },
+    { id: 'game', name: '游戏娱乐', icon: 'bi-controller' },
+    { id: 'tools', name: '工具', icon: 'bi-tools' },
+    { id: 'dev', name: '开发', icon: 'bi-code-square' },
+    { id: 'learning', name: '学习', icon: 'bi-book' }
+];
+
+// 初始网站数据
 const initialSites = [
+    // 搜索类
     {
-        name: '传文件找文叔叔',
-        url: 'https://www.wenshushu.cn/',
-        category: 'tools',
+        name: '百度一下',
+        url: 'https://www.baidu.com',
+        category: 'search',
         icon: 'bi-search'
+    },
+    {
+        name: '谷歌搜索',
+        url: 'https://www.google.com',
+        category: 'search',
+        icon: 'bi-google'
+    },
+    {
+        name: 'Bing必应',
+        url: 'https://www.bing.com',
+        category: 'search',
+        icon: 'bi-microsoft'
+    },
+    {
+        name: '搜狗搜索',
+        url: 'https://www.sogou.com',
+        category: 'search',
+        icon: 'bi-search'
+    },
+    {
+        name: '知乎搜索',
+        url: 'https://www.zhihu.com/search',
+        category: 'search',
+        icon: 'bi-question-circle'
+    },
+    {
+        name: '哔哩哔哩',
+        url: 'https://search.bilibili.com',
+        category: 'search',
+        icon: 'bi-play-circle'
+    },
+    {
+        name: '微博搜索',
+        url: 'https://s.weibo.com',
+        category: 'search',
+        icon: 'bi-chat-dots'
+    },
+    {
+        name: '在线翻译',
+        url: 'https://fanyi.baidu.com',
+        category: 'search',
+        icon: 'bi-translate'
+    },
+    // 网盘搜索
+    {
+        name: '夸克盘搜',
+        url: 'https://pan.quark.cn',
+        category: 'netdisk',
+        icon: 'bi-search'
+    },
+    {
+        name: '阿里盘搜',
+        url: 'https://www.alipansou.com',
+        category: 'netdisk',
+        icon: 'bi-search'
+    },
+    {
+        name: '迅雷盘搜',
+        url: 'https://pan.xunlei.com',
+        category: 'netdisk',
+        icon: 'bi-lightning'
+    },
+    {
+        name: 'UC云搜',
+        url: 'https://www.uc123.com',
+        category: 'netdisk',
+        icon: 'bi-search'
+    },
+    {
+        name: '天翼搜',
+        url: 'https://cloud.189.cn',
+        category: 'netdisk',
+        icon: 'bi-search'
+    },
+    {
+        name: '百度云搜',
+        url: 'https://pan.baidu.com',
+        category: 'netdisk',
+        icon: 'bi-search'
+    },
+    // AI类
+    {
+        name: 'DeepSeek',
+        url: 'https://deepseek.com',
+        category: 'ai',
+        icon: 'bi-robot'
     },
     {
         name: '百度AI图片助手',
         url: 'https://image.baidu.com/search/index?showMask=1&fr=csaitab&tn=baiduimage&toolType=1&word=bdaitpzs百度AI图片助手bdaitpzs',
+        category: 'ai',
+        icon: 'bi-image'
+    },
+    {
+        name: 'AI助手-ChatOS2',
+        url: 'https://chat18.aichatos68.com/#/chat/1744721558898',
+        category: 'ai',
+        icon: 'bi-robot'
+    },
+    {
+        name: '免费ChatGPT',
+        url: 'https://freegpt.tech',
+        category: 'ai',
+        icon: 'bi-robot'
+    },
+    {
+        name: 'OpenRouter开源模型社区',
+        url: 'https://openrouter.ai/models',
+        category: 'ai',
+        icon: 'bi-box'
+    },
+    {
+        name: 'FreeAI-算力平台',
+        url: 'https://qwq.aigpu.cn',
+        category: 'ai',
+        icon: 'bi-gpu-card'
+    },
+    {
+        name: '魔搭社区',
+        url: 'https://www.modelscope.cn/models?page=1&tasks=auto-speech-recognition&type=audio',
+        category: 'ai',
+        icon: 'bi-collection'
+    },
+    {
+        name: '豆包',
+        url: 'https://www.doubao.com',
+        category: 'ai',
+        icon: 'bi-chat'
+    },
+    {
+        name: '文心一言',
+        url: 'https://yiyan.baidu.com',
+        category: 'ai',
+        icon: 'bi-chat-dots'
+    },
+    {
+        name: 'Kimi',
+        url: 'https://kimi.moonshot.cn',
+        category: 'ai',
+        icon: 'bi-robot'
+    },
+    {
+        name: '通义千问',
+        url: 'https://qianwen.aliyun.com',
+        category: 'ai',
+        icon: 'bi-chat'
+    },
+    {
+        name: '腾讯混元',
+        url: 'https://hunyuan.tencent.com',
+        category: 'ai',
+        icon: 'bi-chat-dots'
+    },
+    {
+        name: 'Gemini',
+        url: 'https://gemini.google.com',
+        category: 'ai',
+        icon: 'bi-google'
+    },
+    {
+        name: 'ChatGPT',
+        url: 'https://chat.openai.com',
+        category: 'ai',
+        icon: 'bi-robot'
+    },
+    {
+        name: 'Claude',
+        url: 'https://claude.ai',
+        category: 'ai',
+        icon: 'bi-robot'
+    },
+    // 存储类
+    {
+        name: '百度网盘',
+        url: 'https://pan.baidu.com',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '阿里云盘',
+        url: 'https://www.aliyundrive.com',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '夸克网盘',
+        url: 'https://pan.quark.cn',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '迅雷云盘',
+        url: 'https://pan.xunlei.com',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '天翼云盘',
+        url: 'https://cloud.189.cn',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: 'UC网盘',
+        url: 'https://www.uc.cn/drive',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '蓝奏云',
+        url: 'https://www.lanzou.com',
+        category: 'storage',
+        icon: 'bi-cloud'
+    },
+    {
+        name: 'OneDrive',
+        url: 'https://onedrive.live.com',
+        category: 'storage',
+        icon: 'bi-microsoft'
+    },
+    // 社交类
+    {
+        name: '微博',
+        url: 'https://weibo.com',
+        category: 'social',
+        icon: 'bi-chat-dots'
+    },
+    {
+        name: '百度贴吧',
+        url: 'https://tieba.baidu.com',
+        category: 'social',
+        icon: 'bi-chat-square-text'
+    },
+    {
+        name: '简书',
+        url: 'https://www.jianshu.com',
+        category: 'social',
+        icon: 'bi-journal-text'
+    },
+    {
+        name: '知乎',
+        url: 'https://www.zhihu.com',
+        category: 'social',
+        icon: 'bi-question-circle'
+    },
+    {
+        name: '豆瓣',
+        url: 'https://www.douban.com',
+        category: 'social',
+        icon: 'bi-book'
+    },
+    {
+        name: 'QQ邮箱',
+        url: 'https://mail.qq.com',
+        category: 'social',
+        icon: 'bi-envelope'
+    },
+    {
+        name: 'Gmail',
+        url: 'https://mail.google.com',
+        category: 'social',
+        icon: 'bi-google'
+    },
+    {
+        name: 'Hotmail',
+        url: 'https://outlook.live.com',
+        category: 'social',
+        icon: 'bi-microsoft'
+    },
+    {
+        name: '网易邮箱',
+        url: 'https://mail.163.com',
+        category: 'social',
+        icon: 'bi-envelope'
+    },
+    {
+        name: '新浪邮箱',
+        url: 'https://mail.sina.com.cn',
+        category: 'social',
+        icon: 'bi-envelope'
+    },
+    {
+        name: '阿里邮箱',
+        url: 'https://mail.aliyun.com',
+        category: 'social',
+        icon: 'bi-envelope'
+    },
+    {
+        name: '今日头条',
+        url: 'https://www.toutiao.com',
+        category: 'social',
+        icon: 'bi-newspaper'
+    },
+    {
+        name: '小红书',
+        url: 'https://www.xiaohongshu.com',
+        category: 'social',
+        icon: 'bi-book'
+    },
+    // 影视音乐
+    {
+        name: '腾讯视频',
+        url: 'https://v.qq.com',
+        category: 'media',
+        icon: 'bi-play-circle'
+    },
+    {
+        name: '优酷',
+        url: 'https://www.youku.com',
+        category: 'media',
+        icon: 'bi-play-circle'
+    },
+    {
+        name: '爱奇艺',
+        url: 'https://www.iqiyi.com',
+        category: 'media',
+        icon: 'bi-play-circle'
+    },
+    {
+        name: '哔哩哔哩',
+        url: 'https://www.bilibili.com',
+        category: 'media',
+        icon: 'bi-play-circle'
+    },
+    {
+        name: 'CCTV直播',
+        url: 'https://tv.cctv.com/live',
+        category: 'media',
+        icon: 'bi-broadcast'
+    },
+    {
+        name: '抖音网页版',
+        url: 'https://www.douyin.com',
+        category: 'media',
+        icon: 'bi-music-note'
+    },
+    {
+        name: '快手网页版',
+        url: 'https://www.kuaishou.com',
+        category: 'media',
+        icon: 'bi-camera-reels'
+    },
+    {
+        name: '网易云音乐',
+        url: 'https://music.163.com',
+        category: 'media',
+        icon: 'bi-music-note'
+    },
+    {
+        name: 'QQ音乐',
+        url: 'https://y.qq.com',
+        category: 'media',
+        icon: 'bi-music-note'
+    },
+    {
+        name: '酷狗音乐',
+        url: 'https://www.kugou.com',
+        category: 'media',
+        icon: 'bi-music-note'
+    },
+    {
+        name: '虎牙直播',
+        url: 'https://www.huya.com',
+        category: 'media',
+        icon: 'bi-broadcast'
+    },
+    {
+        name: '斗鱼直播',
+        url: 'https://www.douyu.com',
+        category: 'media',
+        icon: 'bi-broadcast'
+    },
+    // 游戏娱乐
+    {
+        name: '4399小游戏',
+        url: 'http://www.4399.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    {
+        name: '7k7k小游戏',
+        url: 'http://www.7k7k.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    {
+        name: '英雄联盟',
+        url: 'https://lol.qq.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    {
+        name: '永劫无间',
+        url: 'https://www.yjwj.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    {
+        name: 'STEAM',
+        url: 'https://store.steampowered.com',
+        category: 'game',
+        icon: 'bi-steam'
+    },
+    {
+        name: '王者荣耀',
+        url: 'https://pvp.qq.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    {
+        name: '3DM GAME',
+        url: 'https://www.3dmgame.com',
+        category: 'game',
+        icon: 'bi-controller'
+    },
+    // 工具类
+    {
+        name: 'IP查询',
+        url: 'https://www.ip138.com',
         category: 'tools',
         icon: 'bi-search'
+    },
+    {
+        name: '文档在线转换',
+        url: 'https://www.aconvert.com',
+        category: 'tools',
+        icon: 'bi-file-earmark-text'
+    },
+    {
+        name: '谷歌翻译',
+        url: 'https://translate.google.com',
+        category: 'tools',
+        icon: 'bi-translate'
+    },
+    {
+        name: '有道翻译',
+        url: 'https://fanyi.youdao.com',
+        category: 'tools',
+        icon: 'bi-translate'
+    },
+    {
+        name: 'HTML在线运行',
+        url: 'https://c.runoob.com',
+        category: 'tools',
+        icon: 'bi-code'
+    },
+    {
+        name: 'MD编辑器',
+        url: 'https://markdown.com.cn/editor',
+        category: 'tools',
+        icon: 'bi-markdown'
+    },
+    {
+        name: '在线代码格式化',
+        url: 'https://tool.oschina.net/codeformat',
+        category: 'tools',
+        icon: 'bi-code-square'
+    },
+    {
+        name: 'JS混淆器',
+        url: 'https://www.sojson.com/js.html',
+        category: 'tools',
+        icon: 'bi-braces'
+    },
+    {
+        name: '站长工具',
+        url: 'https://tool.chinaz.com',
+        category: 'tools',
+        icon: 'bi-tools'
+    },
+    {
+        name: '在线Ping',
+        url: 'https://ping.chinaz.com',
+        category: 'tools',
+        icon: 'bi-activity'
+    },
+    {
+        name: 'ICP备案查询',
+        url: 'https://beian.miit.gov.cn',
+        category: 'tools',
+        icon: 'bi-search'
+    },
+    {
+        name: '传文件找文叔叔',
+        url: 'https://www.wenshushu.cn/',
+        category: 'tools',
+        icon: 'bi-file-earmark-arrow-up'
     },
     {
         name: '微软商店软件下载',
         url: 'https://store.rg-adguard.net',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-microsoft'
     },
     {
         name: '2925邮箱-无限邮',
         url: 'https://2925.com/#/',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-envelope'
     },
     {
-        name: '首页 — iKuuu VPN',
+        name: '魔法站 — iKuuu VPN',
         url: 'https://ikuuu.one/user',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-shield-check'
     },
     {
-        name: '我的节点 - 西部世界VPN',
+        name: '西部世界VPN',
         url: 'https://xbsj5632.website/portal/order/node',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-shield-check'
     },
     {
-        name: 'Leleo 免费二级域名分发系统',
+        name: '二级域名分发系统',
         url: 'https://sds.leleo.top',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-diagram-3'
     },
     {
-        name: 'Jay的资源库 | 互联网资源集大成者',
-        url: 'https://www.lovejay.top',
-        category: 'learning',
-        icon: 'bi-search'
-    },
-    {
-        name: '一键翻唱任意歌手的任意歌曲！',
+        name: '翻唱任意歌曲！',
         url: 'https://kevinwang676-neucosvc-colab.hf.space/',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-music-note'
     },
     {
-        name: '速剧：短剧爱好者的天堂，免费观看',
+        name: '速剧：短剧爱好者的天堂',
         url: 'https://m.suju.app',
-        category: 'tools',
-        icon: 'bi-search'
+        category: 'media',
+        icon: 'bi-play-circle'
     },
     {
         name: '果冻代理下载',
         url: 'https://down.66a.vip',
         category: 'tools',
-        icon: 'bi-search'
+        icon: 'bi-download'
     },
     {
-        name: 'ChatGPT 账号注册并免费获取 API Key，无需国外手机号接码、无需国外信用卡绑卡（临时邮箱注册）-IT知识空间',
+        name: '临时邮箱注册-IT知识空间',
         url: 'https://blog.fjy.zone/archives/ai-account-chatgpt-free',
         category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: 'AIchatOS2GPT',
-        url: 'https://chat18.aichatos68.com/#/chat/1744721558898',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: 'Ayobe小贤定向链接 - 飞书云文档',
-        url: 'https://c1wtkpld08.feishu.cn/sheets/GvuusRw89h8f4jt0U0Cce00LnWb',
-        category: 'common',
-        icon: 'bi-search'
-    },
-    {
-        name: 'Cloud Studio - 云端开发，化繁为简',
-        url: 'https://cloudstudio.net',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: '模型库首页 · 魔搭社区',
-        url: 'https://www.modelscope.cn/models?page=1&tasks=auto-speech-recognition&type=audio',
-        category: 'common',
-        icon: 'bi-search'
-    },
-    {
-        name: '智能AI聊天工具-免费GPT网站在线体验无限制使用-免费ChatGPT',
-        url: 'https://freegpt.tech',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: 'Models | OpenRouter开源模型社区',
-        url: 'https://openrouter.ai/models',
-        category: 'common',
-        icon: 'bi-search'
-    },
-    {
-        name: 'Free QWQ - 免费分布式 AI 算力平台',
-        url: 'https://qwq.aigpu.cn',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: 'Apifox',
-        url: 'https://app.apifox.com/main/teams/3506393?tab=project',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: '免费节点 - AirportNode',
-        url: 'https://gitlab.com/zhifan999/fq/-/wikis/home',
-        category: 'tools',
-        icon: 'bi-search'
-    },
-    {
-        name: '首页 ·维基 ·志帆 / FQ ·极狐GitLab',
-        url: 'https://www.airportnode.com/category-1.html',
-        category: 'common',
-        icon: 'bi-search'
-    },
-    {
-        name: 'B站',
-        url: 'https://www.bilibili.com',
-        category: 'common',
-        icon: 'bi-bilibili'
-    },
-    {
-        name: '谷歌',
-        url: 'https://www.google.com',
-        category: 'common',
-        icon: 'bi-google'
-    },
-    {
-        name: 'GitHub',
-        url: 'https://www.github.com',
-        category: 'common',
-        icon: 'bi-github'
-    },
-    {
-        name: 'YouTube',
-        url: 'https://www.youtube.com',
-        category: 'common',
-        icon: 'bi-youtube'
+        icon: 'bi-envelope'
     },
     {
         name: 'Notion',
@@ -162,10 +570,23 @@ const initialSites = [
         icon: 'bi-journal-text'
     },
     {
-        name: 'ChatGPT',
-        url: 'https://chat.openai.com',
-        category: 'tools',
-        icon: 'bi-chat-dots'
+        name: '云端开发，化繁为简',
+        url: 'https://cloudstudio.net',
+        category: 'dev',
+        icon: 'bi-cloud-arrow-up'
+    },
+    {
+        name: 'Apifox项目开发',
+        url: 'https://app.apifox.com/main/teams/3506393?tab=project',
+        category: 'dev',
+        icon: 'bi-braces'
+    },
+    // 学习资源
+    {
+        name: 'Jay的资源库',
+        url: 'https://www.lovejay.top',
+        category: 'learning',
+        icon: 'bi-collection'
     },
     {
         name: 'Coursera',
@@ -185,55 +606,99 @@ const initialSites = [
         category: 'learning',
         icon: 'bi-code-slash'
     },
+    // 魔法上网
     {
-        name: '百度',
-        url: 'https://www.baidu.com',
+        name: '免费节点 - AirportNode',
+        url: 'https://gitlab.com/zhifan999/fq/-/wikis/home',
+        category: 'tools',
+        icon: 'bi-shield'
+    },
+    {
+        name: '魔法浏览器',
+        url: 'https://www.airportnode.com/category-1.html',
+        category: 'tools',
+        icon: 'bi-globe'
+    },
+    // 常用导航
+    {
+        name: 'Ayobe小贤定向链接',
+        url: 'https://c1wtkpld08.feishu.cn/sheets/GvuusRw89h8f4jt0U0Cce00LnWb',
         category: 'common',
-        icon: 'bi-search'
+        icon: 'bi-link'
     },
     {
-        name: '腾讯',
-        url: 'https://www.qq.com',
-        category: 'common',
-        icon: 'bi-chat'
+        name: 'YouTube',
+        url: 'https://www.youtube.com',
+        category: 'media',
+        icon: 'bi-youtube'
+    },
+    // 开发类
+    {
+        name: 'W3school',
+        url: 'https://www.w3school.com.cn',
+        category: 'dev',
+        icon: 'bi-code-slash'
     },
     {
-        name: '淘宝',
-        url: 'https://www.taobao.com',
-        category: 'common',
-        icon: 'bi-bag'
+        name: 'Github',
+        url: 'https://github.com',
+        category: 'dev',
+        icon: 'bi-github'
     },
     {
-        name: '哔哩哔哩',
-        url: 'https://www.bilibili.com',
-        category: 'entertainment',
-        icon: 'bi-play-btn'
+        name: '码云Gitee',
+        url: 'https://gitee.com',
+        category: 'dev',
+        icon: 'bi-git'
     },
     {
-        name: '抖音',
-        url: 'https://www.douyin.com',
-        category: 'entertainment',
-        icon: 'bi-music-note'
+        name: 'Linux命令查询',
+        url: 'https://www.linuxcool.com',
+        category: 'dev',
+        icon: 'bi-terminal'
     },
     {
-        name: '网易云音乐',
-        url: 'https://music.163.com',
-        category: 'entertainment',
-        icon: 'bi-music-note-beamed'
+        name: 'CSDN',
+        url: 'https://www.csdn.net',
+        category: 'dev',
+        icon: 'bi-journal-code'
+    },
+    {
+        name: 'CdnJs',
+        url: 'https://cdnjs.com',
+        category: 'dev',
+        icon: 'bi-box-arrow-down'
+    },
+    {
+        name: '字节跳动CDN',
+        url: 'https://cdn.bytedance.com',
+        category: 'dev',
+        icon: 'bi-box-arrow-down'
+    },
+    {
+        name: 'Font Awesome',
+        url: 'https://fontawesome.com',
+        category: 'dev',
+        icon: 'bi-fonts'
+    },
+    {
+        name: 'MSDN我告诉你',
+        url: 'https://msdn.itellyou.cn',
+        category: 'dev',
+        icon: 'bi-microsoft'
+    },
+    {
+        name: '腾讯云',
+        url: 'https://cloud.tencent.com',
+        category: 'dev',
+        icon: 'bi-cloud'
+    },
+    {
+        name: '阿里云',
+        url: 'https://www.aliyun.com',
+        category: 'dev',
+        icon: 'bi-cloud'
     }
-];
-
-// 网站分类数据
-const categories = [
-    { id: 'all', name: '全部', icon: 'bi-grid-fill' },
-    { id: 'common', name: '常用', icon: 'bi-star-fill' },
-    { id: 'tools', name: '工具', icon: 'bi-tools' },
-    { id: 'ai', name: 'AI工具', icon: 'bi-robot' },
-    { id: 'learning', name: '学习', icon: 'bi-book' },
-    { id: 'entertainment', name: '娱乐', icon: 'bi-play-circle' },
-    { id: 'dev', name: '开发', icon: 'bi-code-square' },
-    { id: 'design', name: '设计', icon: 'bi-palette' },
-    { id: 'social', name: '社交', icon: 'bi-people' }
 ];
 
 // 全局变量
@@ -276,158 +741,70 @@ const elements = {
     toast: document.getElementById('toast')
 };
 
-// 初始化收藏夹
-function initializeFavorites() {
-    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    renderFavorites();
-}
+// 主题配置
+const themes = [
+    { id: 'default', name: '默认主题', icon: 'bi-sun' },
+    { id: 'dark', name: '暗色主题', icon: 'bi-moon-stars' },
+    { id: 'ocean', name: '海洋主题', icon: 'bi-water' },
+    { id: 'forest', name: '森林主题', icon: 'bi-tree' },
+    { id: 'sunset', name: '日落主题', icon: 'bi-sunset' }
+];
 
-// 渲染收藏夹
-function renderFavorites() {
-    if (!elements.favoritesList) return;
+// 主题切换功能
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'default';
+    applyTheme(savedTheme);
     
-    elements.favoritesList.innerHTML = favorites.map((site, index) => `
-        <div class="favorite-item" draggable="true" data-index="${index}">
-            <i class="bi ${site.icon} favorite-icon"></i>
-            <div class="favorite-info">
-                <div class="favorite-name">${site.name}</div>
-                <div class="favorite-url">${site.url}</div>
-            </div>
-            <div class="favorite-actions">
-                <button class="action-btn remove-favorite" data-index="${index}">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
+    // 添加主题切换按钮到头部
+    const header = document.querySelector('header');
+    const themeBtn = document.createElement('button');
+    themeBtn.className = 'theme-btn';
+    themeBtn.innerHTML = `<i class="bi ${themes.find(t => t.id === savedTheme)?.icon || 'bi-sun'}"></i>`;
+    header.appendChild(themeBtn);
+    
+    // 创建主题选择菜单
+    const themeMenu = document.createElement('div');
+    themeMenu.className = 'theme-menu';
+    themeMenu.innerHTML = themes.map(theme => `
+        <div class="theme-option ${theme.id === savedTheme ? 'active' : ''}" data-theme="${theme.id}">
+            <i class="bi ${theme.icon}"></i>
+            <span>${theme.name}</span>
         </div>
     `).join('');
-
-    // 添加拖拽事件监听
-    const favoriteItems = elements.favoritesList.querySelectorAll('.favorite-item');
-    favoriteItems.forEach(item => {
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
+    document.body.appendChild(themeMenu);
+    
+    // 主题按钮点击事件
+    themeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        themeMenu.classList.toggle('show');
+    });
+    
+    // 主题选择事件
+    themeMenu.addEventListener('click', (e) => {
+        const themeOption = e.target.closest('.theme-option');
+        if (themeOption) {
+            const theme = themeOption.dataset.theme;
+            applyTheme(theme);
+            themeMenu.classList.remove('show');
+            showToast('主题切换成功！', 'success');
+        }
+    });
+    
+    // 点击其他地方关闭主题菜单
+    document.addEventListener('click', () => {
+        themeMenu.classList.remove('show');
     });
 }
 
-// 拖拽相关函数
-function handleDragStart(e) {
-    e.target.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', e.target.dataset.index);
-}
-
-function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    const draggingItem = document.querySelector('.dragging');
-    if (draggingItem !== e.target) {
-        e.target.classList.add('drag-over');
-    }
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-    const toIndex = parseInt(e.target.closest('.favorite-item').dataset.index);
-    
-    if (fromIndex !== toIndex) {
-        const temp = favorites[fromIndex];
-        favorites.splice(fromIndex, 1);
-        favorites.splice(toIndex, 0, temp);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        renderFavorites();
-    }
-    
-    e.target.classList.remove('drag-over');
-}
-
-// 添加到收藏夹
-function addToFavorites(site) {
-    if (!favorites.some(f => f.url === site.url)) {
-        favorites.push(site);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        renderFavorites();
-        showToast('已添加到收藏夹', 'success');
-    } else {
-        showToast('该网站已在收藏夹中');
-    }
-}
-
-// 从收藏夹移除
-function removeFromFavorites(index) {
-    favorites.splice(index, 1);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    renderFavorites();
-    showToast('已从收藏夹移除', 'success');
-}
-
-// 导入导出功能
-function exportData() {
-    const data = {
-        sites: sites,
-        favorites: favorites,
-        theme: currentTheme
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'nav-site-backup.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showToast('数据导出成功', 'success');
-}
-
-function importData(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            sites = data.sites || sites;
-            favorites = data.favorites || favorites;
-            currentTheme = data.theme || currentTheme;
-            
-            localStorage.setItem('sites', JSON.stringify(sites));
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            localStorage.setItem('theme', currentTheme);
-            
-            applyTheme(currentTheme);
-            renderSites();
-            renderFavorites();
-            showToast('数据导入成功', 'success');
-        } catch (error) {
-            showToast('导入失败：无效的文件格式');
-        }
-    };
-    reader.readAsText(file);
-}
-
-// 主题相关函数
-function initializeTheme() {
-    // 加载保存的主题
-    const savedTheme = localStorage.getItem('theme') || 'default';
-    applyTheme(savedTheme);
-}
-
 function applyTheme(theme) {
-    // 移除所有主题类
-    document.body.classList.remove('default-theme', 'dark-theme', 'ocean-theme', 'forest-theme', 'sunset-theme');
-    // 添加新主题类
-    document.body.classList.add(`${theme}-theme`);
-    // 更新主题图标
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.innerHTML = `<i class="bi bi-${theme === 'dark' ? 'sun' : 'moon-stars'}"></i>`;
-    // 保存主题设置
-    currentTheme = theme;
+    document.body.className = `${theme}-theme`;
     localStorage.setItem('theme', theme);
+    
+    // 更新主题按钮图标
+    const themeBtn = document.querySelector('.theme-btn');
+    if (themeBtn) {
+        themeBtn.innerHTML = `<i class="bi ${themes.find(t => t.id === theme)?.icon || 'bi-sun'}"></i>`;
+    }
     
     // 更新主题选项的激活状态
     document.querySelectorAll('.theme-option').forEach(option => {
@@ -435,11 +812,111 @@ function applyTheme(theme) {
     });
 }
 
-function applyCustomColors(primary, accent) {
-    document.documentElement.style.setProperty('--primary-color', primary);
-    document.documentElement.style.setProperty('--accent-color', accent);
-    localStorage.setItem('custom-primary-color', primary);
-    localStorage.setItem('custom-accent-color', accent);
+// 收藏夹功能
+function initializeFavorites() {
+    // 从本地存储加载收藏夹数据
+    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    
+    // 添加收藏按钮到头部
+    const header = document.querySelector('header');
+    const favBtn = document.createElement('button');
+    favBtn.className = 'fav-btn';
+    favBtn.innerHTML = '<i class="bi bi-star"></i>';
+    header.appendChild(favBtn);
+    
+    // 创建收藏夹模态框
+    const favModal = document.createElement('div');
+    favModal.className = 'modal';
+    favModal.id = 'favorites-modal';
+    favModal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>我的收藏</h2>
+                <button class="close-btn"><i class="bi bi-x"></i></button>
+            </div>
+            <div class="favorites-list"></div>
+        </div>
+    `;
+    document.body.appendChild(favModal);
+    
+    // 收藏按钮点击事件
+    favBtn.addEventListener('click', () => {
+        renderFavorites();
+        favModal.style.display = 'block';
+    });
+    
+    // 关闭按钮事件
+    favModal.querySelector('.close-btn').addEventListener('click', () => {
+        favModal.style.display = 'none';
+    });
+    
+    // 点击模态框外部关闭
+    favModal.addEventListener('click', (e) => {
+        if (e.target === favModal) {
+            favModal.style.display = 'none';
+        }
+    });
+}
+
+function toggleFavorite(site) {
+    const index = favorites.findIndex(f => f.url === site.url);
+    if (index === -1) {
+        // 添加到收藏
+        favorites.push(site);
+        showToast('已添加到收藏！', 'success');
+    } else {
+        // 从收藏中移除
+        favorites.splice(index, 1);
+        showToast('已从收藏中移除', 'success');
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    renderSites(); // 更新网站列表中的收藏状态
+}
+
+function renderFavorites() {
+    const favoritesList = document.querySelector('.favorites-list');
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = '<div class="empty-favorites">暂无收藏的网站</div>';
+        return;
+    }
+    
+    favoritesList.innerHTML = favorites.map(site => `
+        <div class="favorite-item">
+            <i class="bi ${site.icon}"></i>
+            <div class="favorite-info">
+                <div class="favorite-name">${site.name}</div>
+                <div class="favorite-url">${site.url}</div>
+            </div>
+            <div class="favorite-actions">
+                <a href="${site.url}" target="_blank" class="action-btn">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <button class="action-btn remove-favorite" onclick="toggleFavorite(${JSON.stringify(site)})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 修改网站卡片渲染函数，添加收藏按钮
+function renderSiteCard(site) {
+    const isFavorite = favorites.some(f => f.url === site.url);
+    return `
+        <div class="site-card">
+            <i class="bi ${site.icon} site-icon"></i>
+            <div class="site-name">${site.name}</div>
+            <div class="site-actions">
+                <a href="${site.url}" target="_blank" class="action-btn">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" 
+                        onclick="toggleFavorite(${JSON.stringify(site)})">
+                    <i class="bi bi-star${isFavorite ? '-fill' : ''}"></i>
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 // 事件监听器
@@ -513,57 +990,227 @@ function initializeEventListeners() {
 
 // 渲染网站列表
 function renderSites() {
-    const filteredSites = sites.filter(site => {
-        const matchesCategory = currentCategory === 'all' || site.category === currentCategory;
-        const matchesSearch = !searchQuery || 
-            site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            site.url.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+    const mainContent = document.getElementById('main-content');
+    const searchQuery = document.getElementById('search-input').value.toLowerCase();
+    
+    // 按分类对网站进行分组
+    const sitesByCategory = {};
+    sites.forEach(site => {
+        if (!sitesByCategory[site.category]) {
+            sitesByCategory[site.category] = [];
+        }
+        if (!searchQuery || 
+            site.name.toLowerCase().includes(searchQuery) || 
+            site.url.toLowerCase().includes(searchQuery)) {
+            sitesByCategory[site.category].push(site);
+        }
     });
 
-    if (filteredSites.length === 0) {
-        elements.mainContent.innerHTML = '';
-        elements.emptyState.style.display = 'block';
-    } else {
-        elements.emptyState.style.display = 'none';
-        const container = document.createElement('div');
-        container.className = 'sites-container';
+    // 清空主内容区
+    const sitesContainer = mainContent.querySelector('.sites-container');
+    sitesContainer.innerHTML = '';
 
-        filteredSites.forEach(site => {
-            const card = document.createElement('a');
-            card.href = site.url;
-            card.target = '_blank';
-            card.className = 'site-card';
-            card.innerHTML = `
-                <i class="bi ${site.icon} site-icon"></i>
-                <div class="site-name">${site.name}</div>
-            `;
+    // 按分类渲染网站
+    let hasContent = false;
+    categories.forEach(category => {
+        const sitesInCategory = sitesByCategory[category.id] || [];
+        if (sitesInCategory.length > 0) {
+            hasContent = true;
             
-            // 添加收藏按钮
-            const favoriteBtn = document.createElement('button');
-            favoriteBtn.className = 'favorite-btn';
-            favoriteBtn.innerHTML = `<i class="bi bi-star${favorites.some(f => f.url === site.url) ? '-fill' : ''}"></i>`;
-            favoriteBtn.onclick = (e) => {
-                e.preventDefault();
-                addToFavorites(site);
-                favoriteBtn.innerHTML = '<i class="bi bi-star-fill"></i>';
-            };
-            card.appendChild(favoriteBtn);
-            
-            container.appendChild(card);
-        });
+            // 添加分类标题
+            const categoryTitle = document.createElement('h2');
+            categoryTitle.className = 'category-title';
+            categoryTitle.innerHTML = `<i class="bi ${category.icon}"></i> ${category.name}`;
+            sitesContainer.appendChild(categoryTitle);
 
-        elements.mainContent.innerHTML = '';
-        elements.mainContent.appendChild(container);
-    }
+            // 添加网站卡片容器
+            const categoryContainer = document.createElement('div');
+            categoryContainer.className = 'sites-grid';
+            categoryContainer.style.display = 'grid';
+            categoryContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
+            categoryContainer.style.gap = '20px';
+            categoryContainer.style.marginBottom = '30px';
+
+            // 渲染该分类下的网站卡片
+            sitesInCategory.forEach(site => {
+                const card = document.createElement('a');
+                card.href = site.url;
+                card.target = '_blank';
+                card.className = 'site-card';
+                card.innerHTML = renderSiteCard(site);
+                categoryContainer.appendChild(card);
+            });
+
+            sitesContainer.appendChild(categoryContainer);
+        }
+    });
+
+    // 显示/隐藏空状态
+    document.getElementById('empty-state').style.display = hasContent ? 'none' : 'block';
 
     // 更新搜索结果信息
+    const searchResultInfo = document.getElementById('search-result-info');
     if (searchQuery) {
-        elements.searchResultInfo.style.display = 'flex';
-        elements.resultCount.textContent = filteredSites.length;
+        const totalResults = Object.values(sitesByCategory).reduce((sum, sites) => sum + sites.length, 0);
+        document.getElementById('result-count').textContent = totalResults;
+        searchResultInfo.style.display = 'flex';
     } else {
-        elements.searchResultInfo.style.display = 'none';
+        searchResultInfo.style.display = 'none';
     }
+}
+
+// 渲染分类标签
+function renderCategories() {
+    const categoryTags = document.getElementById('category-tags');
+    categoryTags.innerHTML = categories.map(category => `
+        <button class="category-tag" data-category="${category.id}">
+            <i class="bi ${category.icon}"></i>
+            ${category.name}
+        </button>
+    `).join('');
+}
+
+// 添加网站表单处理
+function handleAddSite(e) {
+    e.preventDefault();
+    
+    // 获取表单数据
+    const name = document.getElementById('site-name').value.trim();
+    const url = document.getElementById('site-url').value.trim();
+    const category = document.getElementById('site-category').value;
+    
+    // 验证数据
+    if (!name || !url || !category) {
+        showToast('请填写完整信息', 'error');
+        return;
+    }
+
+    // 验证URL格式
+    try {
+        new URL(url);
+    } catch (e) {
+        showToast('请输入有效的网址', 'error');
+        return;
+    }
+
+    // 检查是否已存在相同URL
+    if (sites.some(site => site.url === url)) {
+        showToast('该网站已存在', 'error');
+        return;
+    }
+
+    // 根据分类选择合适的图标
+    let icon = 'bi-link';
+    switch (category) {
+        case 'search':
+            icon = 'bi-search';
+            break;
+        case 'ai':
+            icon = 'bi-robot';
+            break;
+        case 'tools':
+            icon = 'bi-tools';
+            break;
+        case 'dev':
+            icon = 'bi-code-square';
+            break;
+        case 'media':
+            icon = 'bi-play-circle';
+            break;
+        case 'game':
+            icon = 'bi-controller';
+            break;
+        case 'social':
+            icon = 'bi-people';
+            break;
+        case 'storage':
+            icon = 'bi-hdd';
+            break;
+        case 'netdisk':
+            icon = 'bi-cloud';
+            break;
+        case 'learning':
+            icon = 'bi-book';
+            break;
+    }
+
+    // 创建新网站对象
+    const newSite = {
+        name,
+        url,
+        category,
+        icon
+    };
+
+    // 添加到网站列表
+    sites.push(newSite);
+    
+    // 保存到本地存储
+    localStorage.setItem('sites', JSON.stringify(sites));
+    
+    // 重新渲染网站列表
+    renderSites();
+    
+    // 关闭模态框
+    document.getElementById('add-site-modal').style.display = 'none';
+    
+    // 重置表单
+    e.target.reset();
+    
+    // 显示成功提示
+    showToast('网站添加成功！', 'success');
+}
+
+// 导入导出功能
+function exportData() {
+    const data = {
+        sites: sites,
+        favorites: favorites,
+        theme: currentTheme
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nav-site-backup.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('数据导出成功', 'success');
+}
+
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            sites = data.sites || sites;
+            favorites = data.favorites || favorites;
+            currentTheme = data.theme || currentTheme;
+            
+            localStorage.setItem('sites', JSON.stringify(sites));
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            localStorage.setItem('theme', currentTheme);
+            
+            applyTheme(currentTheme);
+            renderSites();
+            renderFavorites();
+            showToast('数据导入成功', 'success');
+        } catch (error) {
+            showToast('导入失败：无效的文件格式');
+        }
+    };
+    reader.readAsText(file);
+}
+
+function applyCustomColors(primary, accent) {
+    document.documentElement.style.setProperty('--primary-color', primary);
+    document.documentElement.style.setProperty('--accent-color', accent);
+    localStorage.setItem('custom-primary-color', primary);
+    localStorage.setItem('custom-accent-color', accent);
 }
 
 // 初始化
@@ -617,51 +1264,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 添加网站按钮事件监听
-    document.getElementById('add-site-btn').addEventListener('click', () => {
-        document.getElementById('add-site-modal').style.display = 'block';
+    // 添加网站按钮事件
+    const addSiteBtn = document.getElementById('add-site-btn');
+    const addSiteModal = document.getElementById('add-site-modal');
+    const addSiteForm = document.getElementById('add-site-form');
+
+    // 打开添加网站模态框
+    addSiteBtn.addEventListener('click', () => {
+        addSiteModal.style.display = 'block';
     });
 
-    // 关闭按钮事件监听
+    // 关闭模态框
     document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.target.closest('.modal').style.display = 'none';
+        btn.addEventListener('click', () => {
+            btn.closest('.modal').style.display = 'none';
         });
     });
 
     // 点击模态框外部关闭
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
     });
 
-    // 添加网站表单提交事件
-    document.getElementById('add-site-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const newSite = {
-            name: document.getElementById('site-name').value,
-            url: document.getElementById('site-url').value,
-            category: document.getElementById('site-category').value,
-            icon: 'bi-link-45deg'
-        };
+    // 添加网站表单提交
+    addSiteForm.addEventListener('submit', handleAddSite);
 
-        // 添加到网站列表
-        sites.push(newSite);
-        localStorage.setItem('sites', JSON.stringify(sites));
-
-        // 重新渲染网站列表
-        renderSites();
-
-        // 关闭模态框并重置表单
-        document.getElementById('add-site-modal').style.display = 'none';
-        document.getElementById('add-site-form').reset();
-
-        // 显示成功提示
-        showToast('网站添加成功！', 'success');
+    // 添加URL输入实时验证
+    const urlInput = document.getElementById('site-url');
+    urlInput.addEventListener('input', () => {
+        try {
+            new URL(urlInput.value);
+            urlInput.setCustomValidity('');
+        } catch (e) {
+            urlInput.setCustomValidity('请输入有效的网址');
+        }
     });
 
     // 初始化收藏夹
@@ -676,17 +1314,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 隐藏加载器
     elements.pageLoader.style.display = 'none';
 });
-
-// 渲染分类标签
-function renderCategories() {
-    const categoryTags = document.getElementById('category-tags');
-    categoryTags.innerHTML = categories.map(category => `
-        <div class="category-tag ${currentCategory === category.id ? 'active' : ''}" data-category="${category.id}">
-            <i class="bi ${category.icon}"></i>
-            ${category.name}
-        </div>
-    `).join('');
-}
 
 // 显示提示信息
 function showToast(message, type = 'info') {
