@@ -412,17 +412,25 @@ function importData(file) {
 
 // 主题相关函数
 function initializeTheme() {
-    applyTheme(currentTheme);
-    document.body.classList.toggle('dark-mode', currentTheme === 'dark');
+    // 加载保存的主题
+    const savedTheme = localStorage.getItem('theme') || 'default';
+    applyTheme(savedTheme);
 }
 
 function applyTheme(theme) {
-    document.body.className = theme;
+    // 移除所有主题类
+    document.body.classList.remove('default-theme', 'dark-theme', 'ocean-theme', 'forest-theme', 'sunset-theme');
+    // 添加新主题类
+    document.body.classList.add(`${theme}-theme`);
+    // 更新主题图标
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.innerHTML = `<i class="bi bi-${theme === 'dark' ? 'sun' : 'moon-stars'}"></i>`;
+    // 保存主题设置
     currentTheme = theme;
     localStorage.setItem('theme', theme);
     
     // 更新主题选项的激活状态
-    elements.themeOptions.forEach(option => {
+    document.querySelectorAll('.theme-option').forEach(option => {
         option.classList.toggle('active', option.dataset.theme === theme);
     });
 }
@@ -430,6 +438,8 @@ function applyTheme(theme) {
 function applyCustomColors(primary, accent) {
     document.documentElement.style.setProperty('--primary-color', primary);
     document.documentElement.style.setProperty('--accent-color', accent);
+    localStorage.setItem('custom-primary-color', primary);
+    localStorage.setItem('custom-accent-color', accent);
 }
 
 // 事件监听器
@@ -456,24 +466,41 @@ function initializeEventListeners() {
         }
     });
     
-    // 主题设置
-    elements.themeSettingsBtn.addEventListener('click', () => {
-        elements.themeSettingsModal.style.display = 'block';
+    // 主题切换按钮
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+        const newTheme = currentTheme === 'dark' ? 'default' : 'dark';
+        applyTheme(newTheme);
     });
-    
-    elements.themeOptions.forEach(option => {
+
+    // 主题设置按钮
+    const themeSettingsBtn = document.getElementById('theme-settings-btn');
+    themeSettingsBtn.addEventListener('click', () => {
+        document.getElementById('theme-settings-modal').style.display = 'block';
+    });
+
+    // 主题选项点击事件
+    document.querySelectorAll('.theme-option').forEach(option => {
         option.addEventListener('click', () => {
             const theme = option.dataset.theme;
             applyTheme(theme);
         });
     });
-    
-    elements.primaryColorPicker.addEventListener('change', (e) => {
-        applyCustomColors(e.target.value, elements.accentColorPicker.value);
+
+    // 自定义颜色选择器
+    const primaryColorPicker = document.getElementById('primary-color');
+    const accentColorPicker = document.getElementById('accent-color');
+
+    // 加载保存的自定义颜色
+    primaryColorPicker.value = localStorage.getItem('custom-primary-color') || '#4361ee';
+    accentColorPicker.value = localStorage.getItem('custom-accent-color') || '#7209b7';
+
+    primaryColorPicker.addEventListener('change', (e) => {
+        applyCustomColors(e.target.value, accentColorPicker.value);
     });
-    
-    elements.accentColorPicker.addEventListener('change', (e) => {
-        applyCustomColors(elements.primaryColorPicker.value, e.target.value);
+
+    accentColorPicker.addEventListener('change', (e) => {
+        applyCustomColors(primaryColorPicker.value, e.target.value);
     });
     
     // 关闭按钮
