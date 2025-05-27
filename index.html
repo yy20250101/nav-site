@@ -3,222 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人导航网站</title>
+    <title>我的导航站</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="icon" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/icons/grid.svg" type="image/svg+xml">
-    <meta name="description" content="个人网站导航，收集和整理常用网站链接">
-    <meta name="theme-color" content="#4361ee">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <!-- 加载动画 -->
-    <div class="loader" id="page-loader">
+    <!-- 页面加载器 -->
+    <div id="page-loader">
         <div class="loader-spinner"></div>
     </div>
 
     <div class="container">
+        <!-- 头部搜索区 -->
         <header>
-            <h1><i class="bi bi-grid"></i> 我的导航</h1>
+            <div class="logo">
+                <h1>我的导航站</h1>
+            </div>
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="搜索网站...">
                 <button id="search-btn"><i class="bi bi-search"></i></button>
             </div>
+            <button id="theme-toggle" class="theme-toggle">
+                <i class="bi bi-moon-stars"></i>
+            </button>
         </header>
-        
+
         <!-- 分类标签 -->
-        <div class="category-tags" id="category-tags">
-            <div class="category-tag active" data-category="all">全部</div>
-            <div class="category-tag" data-category="common">常用网站</div>
-            <div class="category-tag" data-category="tools">工具</div>
-            <div class="category-tag" data-category="learning">学习资源</div>
-            <div class="category-tag" data-category="entertainment">娱乐</div>
+        <div id="category-tags" class="category-tags">
+            <button class="category-tag active" data-category="all">全部</button>
+            <button class="category-tag" data-category="common">常用导航</button>
+            <button class="category-tag" data-category="tools">实用工具</button>
+            <button class="category-tag" data-category="ai">AI工具</button>
+            <button class="category-tag" data-category="social">社交媒体</button>
+            <button class="category-tag" data-category="entertainment">影音娱乐</button>
+            <button class="category-tag" data-category="learning">学习资源</button>
+            <button class="category-tag" data-category="dev">开发工具</button>
         </div>
-        
-        <!-- 搜索结果提示 -->
-        <div class="search-result-info" id="search-result-info" style="display: none;">
+
+        <!-- 搜索结果信息 -->
+        <div id="search-result-info" class="search-result-info" style="display: none;">
             <p>找到 <span id="result-count">0</span> 个结果</p>
-            <button id="clear-search"><i class="bi bi-x-circle"></i> 清除搜索</button>
+            <button id="clear-search">清除搜索</button>
         </div>
-        
+
+        <!-- 主要内容区 -->
         <main id="main-content">
-            <!-- 空状态提示 -->
-            <div class="empty-state" id="empty-state" style="display: none;">
-                <i class="bi bi-search"></i>
-                <h3>未找到相关网站</h3>
-                <p>试试其他关键词，或者添加一个新网站</p>
-            </div>
-            
-            <div class="category" id="common">
-                <h2>常用网站</h2>
-                <div class="sites-container">
-                    <!-- 动态加载内容 -->
-                </div>
-            </div>
-
-            <div class="category" id="tools">
-                <h2>工具</h2>
-                <div class="sites-container">
-                    <!-- 动态加载内容 -->
-                </div>
-            </div>
-
-            <div class="category" id="learning">
-                <h2>学习资源</h2>
-                <div class="sites-container">
-                    <!-- 动态加载内容 -->
-                </div>
-            </div>
-            
-            <div class="category" id="entertainment">
-                <h2>娱乐</h2>
-                <div class="sites-container">
-                    <!-- 动态加载内容 -->
-                </div>
-            </div>
+            <!-- 内容将由JavaScript动态生成 -->
         </main>
 
-        <footer>
-            <div class="footer-left">
-                <p>© 2023-2024 个人导航网站 | <a href="https://github.com/yourusername/nav-site" target="_blank"><i class="bi bi-github"></i> GitHub</a></p>
-                <p class="site-stats">已收藏 <span id="site-count">0</span> 个网站</p>
-            </div>
-            <div class="footer-right">
-                <button id="add-site-btn">添加网站</button>
-                <button id="export-btn" class="secondary-btn"><i class="bi bi-download"></i> 导出</button>
-                <label for="import-file" class="secondary-btn"><i class="bi bi-upload"></i> 导入</label>
-                <input type="file" id="import-file" accept=".json" style="display: none;">
-            </div>
-        </footer>
-    </div>
+        <!-- 空状态提示 -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="bi bi-emoji-frown"></i>
+            <p>暂无内容</p>
+        </div>
 
-    <!-- 暗色模式切换 -->
-    <div class="theme-toggle" id="theme-toggle">
-        <i class="bi bi-moon-fill"></i>
+        <!-- 添加网站按钮 -->
+        <button id="add-site-btn" class="floating-btn">
+            <i class="bi bi-plus-lg"></i>
+        </button>
     </div>
 
     <!-- 添加网站模态框 -->
-    <div class="modal" id="add-site-modal">
+    <div id="add-site-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>添加新网站</h2>
+            <div class="modal-header">
+                <h2>添加网站</h2>
+                <button class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
             <form id="add-site-form">
                 <div class="form-group">
                     <label for="site-name">网站名称</label>
                     <input type="text" id="site-name" required>
                 </div>
                 <div class="form-group">
-                    <label for="site-url">网站链接</label>
-                    <input type="url" id="site-url" required placeholder="https://">
+                    <label for="site-url">网站地址</label>
+                    <input type="url" id="site-url" required>
                 </div>
                 <div class="form-group">
                     <label for="site-category">分类</label>
-                    <select id="site-category">
-                        <option value="common">常用网站</option>
-                        <option value="tools">工具</option>
+                    <select id="site-category" required>
+                        <option value="common">常用导航</option>
+                        <option value="tools">实用工具</option>
+                        <option value="ai">AI工具</option>
+                        <option value="social">社交媒体</option>
+                        <option value="entertainment">影音娱乐</option>
                         <option value="learning">学习资源</option>
-                        <option value="entertainment">娱乐</option>
+                        <option value="dev">开发工具</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="site-icon">图标</label>
                     <div class="icon-selector">
-                        <input type="text" id="site-icon" value="bi-globe" placeholder="Bootstrap Icons 类名">
-                        <div class="icon-preview"><i class="bi bi-globe"></i></div>
-                    </div>
-                    <div class="common-icons">
-                        <div class="icon-option" data-icon="bi-globe"><i class="bi bi-globe"></i></div>
-                        <div class="icon-option" data-icon="bi-star"><i class="bi bi-star"></i></div>
-                        <div class="icon-option" data-icon="bi-chat-dots"><i class="bi bi-chat-dots"></i></div>
-                        <div class="icon-option" data-icon="bi-journal-text"><i class="bi bi-journal-text"></i></div>
-                        <div class="icon-option" data-icon="bi-book"><i class="bi bi-book"></i></div>
-                        <div class="icon-option" data-icon="bi-tools"><i class="bi bi-tools"></i></div>
-                        <div class="icon-option" data-icon="bi-code-slash"><i class="bi bi-code-slash"></i></div>
-                        <div class="icon-option" data-icon="bi-film"><i class="bi bi-film"></i></div>
+                        <div class="icon-preview">
+                            <i class="bi bi-link-45deg"></i>
+                        </div>
+                        <button type="button" id="change-icon">更换图标</button>
                     </div>
                 </div>
-                <button type="submit">保存</button>
+                <button type="submit">添加</button>
             </form>
-        </div>
-    </div>
-    
-    <!-- 网站详情模态框 -->
-    <div class="modal" id="site-detail-modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div class="site-detail-content">
-                <div class="site-detail-header">
-                    <div class="site-detail-icon"><i class="bi bi-globe"></i></div>
-                    <div class="site-detail-name">网站名称</div>
-                </div>
-                <div class="site-detail-url">
-                    <a href="#" target="_blank" id="detail-url">https://example.com</a>
-                </div>
-                <div class="site-detail-actions">
-                    <button id="edit-site-btn" class="secondary-btn"><i class="bi bi-pencil"></i> 编辑</button>
-                    <button id="delete-site-btn" class="danger-btn"><i class="bi bi-trash"></i> 删除</button>
-                    <button id="visit-site-btn" class="primary-btn"><i class="bi bi-box-arrow-up-right"></i> 访问网站</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 确认对话框 -->
-    <div class="modal" id="confirm-modal">
-        <div class="modal-content modal-sm">
-            <h3 id="confirm-message">确定要删除此网站吗？</h3>
-            <div class="confirm-actions">
-                <button id="confirm-cancel" class="secondary-btn">取消</button>
-                <button id="confirm-ok" class="danger-btn">确定</button>
-            </div>
         </div>
     </div>
 
     <!-- 提示框 -->
-    <div class="toast" id="toast"></div>
-
-    <!-- AI聊天助手 -->
-    <div class="chat-toggle" id="chat-toggle">
-        <i class="bi bi-chat-dots-fill"></i>
-    </div>
-
-    <div class="chat-container" id="chat-container">
-        <div class="chat-header">
-            <div class="chat-title">AI助手</div>
-            <div class="chat-actions">
-                <button class="chat-minimize" id="chat-minimize"><i class="bi bi-dash-lg"></i></button>
-                <button class="chat-close" id="chat-close"><i class="bi bi-x-lg"></i></button>
-            </div>
-        </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="message ai">
-                <div class="message-avatar">
-                    <i class="bi bi-robot"></i>
-                </div>
-                <div class="message-content">
-                    <p>你好！我是你的AI助手，有什么可以帮助你的吗？</p>
-                </div>
-            </div>
-        </div>
-        <div class="chat-input-container">
-            <textarea id="chat-input" placeholder="输入问题..." rows="1"></textarea>
-            <button id="chat-send">
-                <i class="bi bi-send-fill"></i>
-            </button>
-        </div>
-        <div class="chat-model-selector">
-            <select id="ai-model">
-                <option value="gpt-3.5">GPT-3.5</option>
-                <option value="gpt-4">GPT-4</option>
-                <option value="claude">Claude</option>
-                <option value="qwen-7b">通义千问-7B</option>
-                <option value="qwen-14b">通义千问-14B</option>
-                <option value="baichuan2-7b">百川2-7B</option>
-                <option value="baichuan2-13b">百川2-13B</option>
-                <option value="chatglm3-6b">ChatGLM3-6B</option>
-            </select>
-            <div class="model-status" id="model-status">准备就绪</div>
-        </div>
-    </div>
+    <div id="toast" class="toast"></div>
 
     <script src="js/script.js"></script>
 </body>
