@@ -27,7 +27,8 @@
     <!-- 头部 -->
     <header>
         <div class="logo">
-            <h1>六月天导航站</h1>
+            <h1><i class="bi bi-compass"></i> 六月天导航站</h1>
+            <p class="tagline">您的网络世界，从这里启航</p>
         </div>
         <div class="search-container">
             <div class="search-box">
@@ -40,8 +41,8 @@
             </div>
         </div>
         <div class="header-links">
-            <a href="#" class="header-link" id="about-site">关于本站</a>
-            <a href="#" class="header-link" id="submit-site">申请收录</a>
+            <a href="#" class="header-link" id="about-site"><i class="bi bi-info-circle"></i> 关于本站</a>
+            <a href="#" class="header-link" id="submit-site"><i class="bi bi-plus-circle"></i> 申请收录</a>
         </div>
     </header>
 
@@ -56,6 +57,9 @@
             <div id="empty-state" class="empty-message" style="display: none;">
                 <i class="bi bi-search"></i>
                 <p>未找到相关网站</p>
+                <button id="reset-search-btn" class="btn-primary" style="margin-top: 20px;">
+                    <i class="bi bi-arrow-repeat"></i> 重置搜索
+                </button>
             </div>
         </div>
     </div>
@@ -64,7 +68,7 @@
     <div id="add-site-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>添加网站</h2>
+                <h2><i class="bi bi-plus-circle"></i> 添加网站</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <form id="add-site-form">
@@ -93,7 +97,7 @@
                         <option value="learning">学习</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">添加</button>
+                <button type="submit" class="btn-primary"><i class="bi bi-plus-lg"></i> 添加</button>
             </form>
         </div>
     </div>
@@ -102,7 +106,7 @@
     <div id="favorites-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>我的收藏</h2>
+                <h2><i class="bi bi-star"></i> 我的收藏</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <div class="favorites-list"></div>
@@ -113,7 +117,7 @@
     <div id="import-export-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>导入导出</h2>
+                <h2><i class="bi bi-gear"></i> 导入导出</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <div class="import-export-options">
@@ -132,7 +136,7 @@
     <div id="theme-settings-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>主题设置</h2>
+                <h2><i class="bi bi-palette"></i> 主题设置</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <div class="theme-options"></div>
@@ -156,21 +160,25 @@
     <div id="about-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>关于本站</h2>
+                <h2><i class="bi bi-info-circle"></i> 关于本站</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <div class="modal-body">
                 <p>六月天导航是一个简洁、美观、实用的个人导航网站，集合了常用网站、工具和资源。</p>
                 <p>本站支持：</p>
                 <ul>
-                    <li>网站分类浏览</li>
-                    <li>快速搜索</li>
-                    <li>收藏功能</li>
-                    <li>自定义添加网站</li>
-                    <li>多种主题切换</li>
-                    <li>数据导入导出</li>
+                    <li><i class="bi bi-grid"></i> 网站分类浏览</li>
+                    <li><i class="bi bi-search"></i> 快速搜索</li>
+                    <li><i class="bi bi-star"></i> 收藏功能</li>
+                    <li><i class="bi bi-plus-circle"></i> 自定义添加网站</li>
+                    <li><i class="bi bi-palette"></i> 多种主题切换</li>
+                    <li><i class="bi bi-arrow-left-right"></i> 数据导入导出</li>
                 </ul>
                 <p>希望能为您的网络冲浪提供便利！</p>
+                <div class="about-footer">
+                    <p>版本: 1.0.0</p>
+                    <p>更新日期: 2024-05-27</p>
+                </div>
             </div>
         </div>
     </div>
@@ -179,7 +187,7 @@
     <div id="submit-modal" class="modal fade-enter">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>申请收录</h2>
+                <h2><i class="bi bi-plus-circle"></i> 申请收录</h2>
                 <button class="close-btn" aria-label="关闭"><i class="bi bi-x"></i></button>
             </div>
             <div class="modal-body">
@@ -217,7 +225,7 @@
                         <label for="submit-contact">联系方式（选填）</label>
                         <input type="text" id="submit-contact" placeholder="邮箱或其他联系方式">
                     </div>
-                    <button type="submit" class="btn-primary">提交申请</button>
+                    <button type="submit" class="btn-primary"><i class="bi bi-send"></i> 提交申请</button>
                 </form>
             </div>
         </div>
@@ -228,23 +236,32 @@
 
     <!-- 浮动按钮 -->
     <div class="floating-buttons">
-        <button id="add-site-btn" class="floating-btn" aria-label="添加网站">
-            <i class="bi bi-plus"></i>
+        <button id="add-site-btn" class="floating-btn" aria-label="添加网站" title="添加网站">
+            <i class="bi bi-plus-lg"></i>
         </button>
-        <button id="theme-btn" class="floating-btn" aria-label="切换主题">
+        <button id="theme-btn" class="floating-btn" aria-label="切换主题" title="主题设置">
             <i class="bi bi-palette"></i>
         </button>
-        <button id="favorites-btn" class="floating-btn" aria-label="我的收藏">
+        <button id="favorites-btn" class="floating-btn" aria-label="我的收藏" title="我的收藏">
             <i class="bi bi-star"></i>
         </button>
-        <button id="import-export-btn" class="floating-btn" aria-label="导入导出">
+        <button id="import-export-btn" class="floating-btn" aria-label="导入导出" title="导入导出">
             <i class="bi bi-gear"></i>
         </button>
     </div>
 
     <!-- 页脚 -->
     <footer>
-        <p>Copyright &copy;2022-2024 . All Rights Reserved.</p>
+        <div class="footer-content">
+            <p>Copyright &copy;2022-2024 . All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="#" id="privacy-link">隐私政策</a>
+                <span class="divider">|</span>
+                <a href="#" id="terms-link">使用条款</a>
+                <span class="divider">|</span>
+                <a href="#" id="feedback-link">意见反馈</a>
+            </div>
+        </div>
     </footer>
 
     <script src="js/script.js"></script>
@@ -262,6 +279,35 @@
             
             // 每8秒切换一次背景
             setInterval(nextSlide, 8000);
+            
+            // 添加重置搜索按钮功能
+            const resetSearchBtn = document.getElementById('reset-search-btn');
+            if (resetSearchBtn) {
+                resetSearchBtn.addEventListener('click', function() {
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        searchQuery = '';
+                        renderSites();
+                    }
+                });
+            }
+            
+            // 添加页脚链接功能
+            document.getElementById('privacy-link')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                showToast('隐私政策功能即将上线', 'info');
+            });
+            
+            document.getElementById('terms-link')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                showToast('使用条款功能即将上线', 'info');
+            });
+            
+            document.getElementById('feedback-link')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                showToast('意见反馈功能即将上线', 'info');
+            });
         });
     </script>
     <!-- 百度统计 -->
