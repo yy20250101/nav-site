@@ -617,20 +617,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 初始化添加网站表单
-    elements.addSiteForm.addEventListener('submit', (e) => {
+    // 添加网站按钮事件监听
+    document.getElementById('add-site-btn').addEventListener('click', () => {
+        document.getElementById('add-site-modal').style.display = 'block';
+    });
+
+    // 关闭按钮事件监听
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.target.closest('.modal').style.display = 'none';
+        });
+    });
+
+    // 点击模态框外部关闭
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // 添加网站表单提交事件
+    document.getElementById('add-site-form').addEventListener('submit', (e) => {
         e.preventDefault();
+        
         const newSite = {
             name: document.getElementById('site-name').value,
             url: document.getElementById('site-url').value,
             category: document.getElementById('site-category').value,
             icon: 'bi-link-45deg'
         };
+
+        // 添加到网站列表
         sites.push(newSite);
         localStorage.setItem('sites', JSON.stringify(sites));
-        elements.addSiteModal.style.display = 'none';
-        elements.addSiteForm.reset();
+
+        // 重新渲染网站列表
         renderSites();
+
+        // 关闭模态框并重置表单
+        document.getElementById('add-site-modal').style.display = 'none';
+        document.getElementById('add-site-form').reset();
+
+        // 显示成功提示
         showToast('网站添加成功！', 'success');
     });
 
@@ -656,4 +686,15 @@ function renderCategories() {
             ${category.name}
         </div>
     `).join('');
+}
+
+// 显示提示信息
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast show ${type}`;
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
 }
