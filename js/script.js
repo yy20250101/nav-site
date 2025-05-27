@@ -844,6 +844,12 @@ function renderFavorites() {
 // 获取网站图标的函数
 async function getFavicon(url) {
     try {
+        // 检查是否是本地文件URL
+        if (url.startsWith('file:///')) {
+            // 对于本地文件，直接使用首字母图标
+            return null;
+        }
+        
         let domain;
         try {
             domain = new URL(url).hostname;
@@ -852,31 +858,70 @@ async function getFavicon(url) {
             return null;
         }
 
-        const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-        
+        // 如果域名为空（可能是本地文件），直接返回null
+        if (!domain) {
+            return null;
+        }
+
+        // 尝试多种方式获取favicon
         return new Promise((resolve) => {
-            const img = new Image();
+            // 准备多种可能的favicon URL
+            const faviconUrls = [
+                // 方法1: 使用Google Favicon服务 (最可靠但可能被墙)
+                `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+                
+                // 方法2: 使用DuckDuckGo的图标服务 (备用方案)
+                `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+                
+                // 方法3: 尝试获取网站根目录的favicon.ico
+                `https://${domain}/favicon.ico`,
+                
+                // 方法4: 尝试获取网站根目录的apple-touch-icon.png (通常是高质量图标)
+                `https://${domain}/apple-touch-icon.png`,
+                
+                // 方法5: 尝试获取网站根目录的apple-touch-icon-precomposed.png
+                `https://${domain}/apple-touch-icon-precomposed.png`,
+                
+                // 方法6: 尝试获取网站根目录的favicon.png
+                `https://${domain}/favicon.png`,
+                
+                // 方法7: 尝试获取网站根目录的icon.png
+                `https://${domain}/icon.png`,
+                
+                // 方法8: 尝试获取网站根目录的logo.png
+                `https://${domain}/logo.png`,
+                
+                // 方法9: 使用Yandex的图标服务
+                `https://favicon.yandex.net/favicon/${domain}`
+            ];
             
-            img.onload = function() {
-                if (this.width > 1 && this.height > 1) {
-                    resolve(googleFaviconUrl);
-                } else {
-                    tryDirectFavicon(url, resolve);
-                }
-            };
+            // 创建一个Promise数组，同时尝试所有方法
+            const promises = faviconUrls.map(url => tryLoadImage(url));
             
-            img.onerror = function() {
-                tryDirectFavicon(url, resolve);
-            };
+            // 使用Promise.race获取最先成功的结果
+            Promise.race(promises)
+                .then(result => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        // 如果所有方法都失败，尝试解析HTML查找favicon链接
+                        tryParseHTML(url)
+                            .then(faviconFromHTML => {
+                                resolve(faviconFromHTML);
+                            })
+                            .catch(() => {
+                                resolve(null);
+                            });
+                    }
+                })
+                .catch(() => {
+                    resolve(null);
+                });
             
+            // 设置超时，防止长时间等待
             setTimeout(() => {
-                if (!img.complete) {
-                    img.src = ''; 
-                    tryDirectFavicon(url, resolve);
-                }
-            }, 3000);
-            
-            img.src = googleFaviconUrl;
+                resolve(null);
+            }, 5000);
         });
     } catch (error) {
         console.error('获取网站图标失败:', error);
@@ -884,22 +929,86 @@ async function getFavicon(url) {
     }
 }
 
-// 尝试直接从网站获取favicon
-function tryDirectFavicon(url, resolve) {
+// 尝试从HTML中解析favicon链接
+async function tryParseHTML(url) {
     try {
-        const domain = new URL(url).origin;
-        const directFaviconUrl = `${domain}/favicon.ico`;
+        // 使用代理服务器避免跨域问题
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
         
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        
+        if (data && data.contents) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.contents, 'text/html');
+            
+            // 查找各种favicon链接
+            const selectors = [
+                'link[rel="icon"]',
+                'link[rel="shortcut icon"]',
+                'link[rel="apple-touch-icon"]',
+                'link[rel="apple-touch-icon-precomposed"]',
+                'link[rel="mask-icon"]',
+                'meta[property="og:image"]'
+            ];
+            
+            for (const selector of selectors) {
+                const element = doc.querySelector(selector);
+                if (element) {
+                    let faviconUrl;
+                    
+                    if (selector === 'meta[property="og:image"]') {
+                        faviconUrl = element.getAttribute('content');
+                    } else {
+                        faviconUrl = element.getAttribute('href');
+                    }
+                    
+                    if (faviconUrl) {
+                        // 处理相对URL
+                        if (faviconUrl.startsWith('/')) {
+                            const baseUrl = new URL(url);
+                            faviconUrl = `${baseUrl.protocol}//${baseUrl.hostname}${faviconUrl}`;
+                        } else if (!faviconUrl.startsWith('http')) {
+                            const baseUrl = new URL(url);
+                            faviconUrl = `${baseUrl.protocol}//${baseUrl.hostname}/${faviconUrl}`;
+                        }
+                        
+                        // 验证图标是否可用
+                        const isValid = await tryLoadImage(faviconUrl);
+                        if (isValid) {
+                            return faviconUrl;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return null;
+    } catch (error) {
+        console.error('解析HTML失败:', error);
+        return null;
+    }
+}
+
+// 尝试加载图片的辅助函数
+function tryLoadImage(url) {
+    return new Promise((resolve) => {
         const img = new Image();
         
         img.onload = function() {
-            resolve(directFaviconUrl);
+            // 检查图片是否有效 (宽高大于1像素)
+            if (this.width > 1 && this.height > 1) {
+                resolve(url);
+            } else {
+                resolve(null);
+            }
         };
         
         img.onerror = function() {
             resolve(null);
         };
         
+        // 设置超时
         setTimeout(() => {
             if (!img.complete) {
                 img.src = ''; 
@@ -907,11 +1016,8 @@ function tryDirectFavicon(url, resolve) {
             }
         }, 3000);
         
-        img.src = directFaviconUrl;
-    } catch (e) {
-        console.error('获取直接favicon失败:', e);
-        resolve(null);
-    }
+        img.src = url;
+    });
 }
 
 // 修改添加网站的处理函数
@@ -920,7 +1026,7 @@ async function handleAddSite(e) {
     
     // 获取表单数据
     const name = document.getElementById('site-name').value.trim();
-    const url = document.getElementById('site-url').value.trim();
+    let url = document.getElementById('site-url').value.trim();
     const category = document.getElementById('site-category').value;
     
     // 验证数据
@@ -929,12 +1035,23 @@ async function handleAddSite(e) {
         return;
     }
 
-    // 验证URL格式
-    try {
-        new URL(url);
-    } catch (e) {
-        showToast('请输入有效的网址', 'error');
-        return;
+    // 检查是否是本地文件路径，如果是则转换为file:///格式
+    if (url.match(/^[a-zA-Z]:\\/) || url.match(/^\/[^\/]/)) {
+        // Windows路径 (C:\) 或 Unix路径 (/etc)
+        url = 'file:///' + url.replace(/\\/g, '/');
+    } else if (!url.includes('://')) {
+        // 如果没有协议，默认添加https://
+        url = 'https://' + url;
+    }
+
+    // 验证URL格式（除了file协议）
+    if (!url.startsWith('file:///')) {
+        try {
+            new URL(url);
+        } catch (e) {
+            showToast('请输入有效的网址', 'error');
+            return;
+        }
     }
 
     // 检查是否已存在相同URL
@@ -944,24 +1061,31 @@ async function handleAddSite(e) {
     }
 
     // 显示加载提示
-    showToast('正在获取网站图标...', 'info');
+    showToast('正在处理...', 'info');
 
-    // 获取网站图标
-    const faviconUrl = await getFavicon(url);
+    // 获取网站图标（只对非本地文件进行）
+    let faviconUrl = null;
+    if (!url.startsWith('file:///')) {
+        faviconUrl = await getFavicon(url);
+    }
     
     // 根据分类选择合适的图标类名（作为备选）
     let iconClass = 'bi-link';
-    switch (category) {
-        case 'search': iconClass = 'bi-search'; break;
-        case 'ai': iconClass = 'bi-robot'; break;
-        case 'tools': iconClass = 'bi-tools'; break;
-        case 'dev': iconClass = 'bi-code-square'; break;
-        case 'media': iconClass = 'bi-play-circle'; break;
-        case 'game': iconClass = 'bi-controller'; break;
-        case 'social': iconClass = 'bi-people'; break;
-        case 'storage': iconClass = 'bi-hdd'; break;
-        case 'netdisk': iconClass = 'bi-cloud'; break;
-        case 'learning': iconClass = 'bi-book'; break;
+    if (url.startsWith('file:///')) {
+        iconClass = 'bi-file-earmark';
+    } else {
+        switch (category) {
+            case 'search': iconClass = 'bi-search'; break;
+            case 'ai': iconClass = 'bi-robot'; break;
+            case 'tools': iconClass = 'bi-tools'; break;
+            case 'dev': iconClass = 'bi-code-square'; break;
+            case 'media': iconClass = 'bi-play-circle'; break;
+            case 'game': iconClass = 'bi-controller'; break;
+            case 'social': iconClass = 'bi-people'; break;
+            case 'storage': iconClass = 'bi-hdd'; break;
+            case 'netdisk': iconClass = 'bi-cloud'; break;
+            case 'learning': iconClass = 'bi-book'; break;
+        }
     }
 
     // 创建新网站对象
@@ -995,9 +1119,31 @@ async function handleAddSite(e) {
 // 修改网站卡片渲染函数，支持显示favicon
 function renderSiteCard(site) {
     const isFavorite = favorites.some(f => f.url === site.url);
-    const iconHtml = site.faviconUrl ? 
-        `<img src="${site.faviconUrl}" class="site-favicon" alt="${site.name}" onerror="this.onerror=null;this.src='';this.className='bi ${site.icon} site-icon';">` :
-        `<i class="bi ${site.icon} site-icon"></i>`;
+    
+    // 检查是否是本地文件URL
+    const isLocalFile = site.url.startsWith('file:///');
+    
+    // 图标HTML，优先使用favicon，如果加载失败则回退到Bootstrap图标或首字母图标
+    let iconHtml;
+    if (site.faviconUrl && !isLocalFile) {
+        // 如果有favicon，使用img标签，并设置加载失败时的回退
+        iconHtml = `<img src="${site.faviconUrl}" class="site-favicon" alt="${site.name}" 
+            onerror="this.onerror=null;this.src='';this.className='site-letter-icon';this.textContent='${getFirstLetter(site.name)}';">`;
+    } else if (site.isLoadingFavicon && !isLocalFile) {
+        // 如果正在加载favicon，显示加载动画
+        iconHtml = `<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+            class="site-favicon loading" alt="${site.name}">`;
+    } else {
+        // 如果没有favicon或是本地文件，使用首字母图标或Bootstrap图标
+        const firstLetter = getFirstLetter(site.name);
+        if (firstLetter) {
+            // 为本地文件使用特殊颜色
+            const bgColor = isLocalFile ? '#4cc9f0' : getColorFromLetter(firstLetter);
+            iconHtml = `<div class="site-letter-icon" style="background-color: ${bgColor}">${firstLetter}</div>`;
+        } else {
+            iconHtml = `<i class="bi ${site.icon} site-icon"></i>`;
+        }
+    }
     
     return `
         <div class="site-card" data-url="${site.url}">
@@ -1014,6 +1160,44 @@ function renderSiteCard(site) {
             </div>
         </div>
     `;
+}
+
+// 获取网站名称的首字母
+function getFirstLetter(name) {
+    if (!name || name.length === 0) return '';
+    
+    // 处理特殊情况：如果是本地文件路径，提取文件名
+    if (name.includes('/') || name.includes('\\')) {
+        const parts = name.split(/[\/\\]/);
+        const fileName = parts[parts.length - 1];
+        // 如果文件名存在且不为空，使用文件名的首字母
+        if (fileName && fileName.length > 0) {
+            return fileName[0].toUpperCase();
+        }
+    }
+    
+    // 处理中文
+    if (/[\u4e00-\u9fa5]/.test(name[0])) {
+        return name[0];
+    }
+    
+    // 处理英文和数字
+    return name[0].toUpperCase();
+}
+
+// 根据字母生成一致的颜色
+function getColorFromLetter(letter) {
+    const colors = [
+        '#4361ee', '#3a0ca3', '#7209b7', '#f72585', '#4cc9f0',
+        '#4895ef', '#560bad', '#f3722c', '#f8961e', '#90be6d',
+        '#43aa8b', '#577590', '#277da1', '#0096c7', '#023e8a'
+    ];
+    
+    // 使用字符编码来选择颜色，确保同一个字母总是对应同一个颜色
+    const charCode = letter.charCodeAt(0);
+    const colorIndex = charCode % colors.length;
+    
+    return colors[colorIndex];
 }
 
 // 事件监听器
@@ -1223,7 +1407,15 @@ function initializeEventListeners() {
         if (siteCard && !e.target.closest('.site-actions')) {
             const url = siteCard.dataset.url;
             if (url) {
-                window.open(url, '_blank');
+                // 特殊处理本地文件URL
+                if (url.startsWith('file:///')) {
+                    // 对于本地文件，使用location.href而不是window.open
+                    // 这样可以在当前标签页打开，避免浏览器安全限制
+                    location.href = url;
+                } else {
+                    // 对于普通网址，使用新标签页打开
+                    window.open(url, '_blank');
+                }
             }
         }
     });
@@ -1402,41 +1594,143 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         favorites = JSON.parse(storedFavorites);
     }
-    
-    document.body.className = `${currentTheme}-theme`;
-    
-    const loader = document.getElementById('page-loader');
-    if (loader) loader.style.display = 'flex';
-    
-    try {
-        initializeFavorites(); // Initialize favorites array
-        initializeTheme();     // Apply theme
-        initializeEventListeners(); // Setup event listeners for all elements, including those in elements object
-        
-        renderCategories();
-        renderSites();
-        
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 300);
-        }
-        showToast('网站加载完成', 'success');
-        
-        if (storedSites === null) { // Only show welcome if it was truly the first load with initialSites
-            showToast('欢迎使用个人导航！', 'success');
-        }
 
-    } catch (error) {
-        console.error('初始化失败:', error);
-        showToast('加载失败，请刷新重试', 'error');
-        if (loader) {
-            loader.style.display = 'none';
-        }
+    // 初始化主题
+    initializeTheme();
+    applyTheme(currentTheme);
+
+    // 初始化事件监听器
+    initializeEventListeners();
+    
+    // 渲染分类和网站
+    renderCategories();
+    renderSites();
+    
+    // 为所有网站加载favicon
+    loadAllFavicons();
+    
+    // 隐藏加载动画
+    if (elements.pageLoader) {
+        setTimeout(() => {
+            elements.pageLoader.style.opacity = '0';
+            setTimeout(() => {
+                elements.pageLoader.style.display = 'none';
+            }, 300);
+        }, 500);
     }
+    
     console.log("初始化完成");
 });
+
+// 为所有网站加载favicon
+async function loadAllFavicons() {
+    console.log("开始为所有网站加载favicon");
+    
+    const updatedSites = [];
+    let hasUpdates = false;
+    
+    // 首先标记所有需要加载favicon的网站
+    for (let i = 0; i < sites.length; i++) {
+        const site = sites[i];
+        
+        // 如果网站已经有favicon URL且不为null，则跳过
+        if (site.faviconUrl) {
+            updatedSites.push(site);
+            continue;
+        }
+        
+        // 标记为正在加载
+        const markedSite = {
+            ...site,
+            isLoadingFavicon: true,
+            retryCount: 0 // 添加重试计数器
+        };
+        
+        updatedSites.push(markedSite);
+        hasUpdates = true;
+    }
+    
+    // 更新状态并重新渲染，显示加载动画
+    if (hasUpdates) {
+        sites = updatedSites;
+        renderSites();
+    }
+    
+    // 批量处理favicon加载，每批8个，避免同时发起太多请求
+    const batchSize = 8;
+    for (let i = 0; i < sites.length; i += batchSize) {
+        const batch = sites.slice(i, i + batchSize);
+        const batchPromises = [];
+        
+        for (let j = 0; j < batch.length; j++) {
+            const site = batch[j];
+            
+            // 如果已经有favicon或重试次数超过限制，则跳过
+            if ((site.faviconUrl && !site.isLoadingFavicon) || (site.retryCount && site.retryCount >= 2)) {
+                continue;
+            }
+            
+            // 创建加载Promise
+            const loadPromise = (async () => {
+                try {
+                    const faviconUrl = await getFavicon(site.url);
+                    
+                    // 更新网站对象
+                    const index = sites.findIndex(s => s.url === site.url);
+                    if (index !== -1) {
+                        sites[index] = {
+                            ...sites[index],
+                            faviconUrl: faviconUrl,
+                            isLoadingFavicon: false,
+                            retryCount: site.retryCount ? site.retryCount + 1 : 1
+                        };
+                    }
+                    
+                    return { index, faviconUrl };
+                } catch (error) {
+                    console.error(`加载网站 ${site.name} 的图标失败:`, error);
+                    
+                    // 更新重试计数
+                    const index = sites.findIndex(s => s.url === site.url);
+                    if (index !== -1) {
+                        sites[index] = {
+                            ...sites[index],
+                            isLoadingFavicon: false,
+                            retryCount: site.retryCount ? site.retryCount + 1 : 1
+                        };
+                    }
+                    
+                    return { index, faviconUrl: null };
+                }
+            })();
+            
+            batchPromises.push(loadPromise);
+        }
+        
+        // 等待当前批次完成
+        await Promise.allSettled(batchPromises);
+        
+        // 每批完成后重新渲染
+        renderSites();
+        
+        // 保存到本地存储
+        localStorage.setItem('sites', JSON.stringify(sites));
+        
+        // 添加短暂延迟，避免请求过于频繁
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    // 清理临时属性
+    sites = sites.map(site => {
+        const { isLoadingFavicon, retryCount, ...cleanSite } = site;
+        return cleanSite;
+    });
+    
+    // 保存最终结果
+    localStorage.setItem('sites', JSON.stringify(sites));
+    
+    console.log("所有网站favicon加载完成");
+}
 
 function showToast(message, type = 'info') {
     const toastEl = document.getElementById('toast'); // Renamed to avoid conflict with elements.toast
