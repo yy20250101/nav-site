@@ -236,6 +236,246 @@ const categories = [
     { id: 'social', name: '社交', icon: 'bi-people' }
 ];
 
+// 全局变量
+let sites = [];
+let favorites = [];
+let currentCategory = 'all';
+let searchQuery = '';
+let currentTheme = localStorage.getItem('theme') || 'default';
+
+// DOM 元素
+const elements = {
+    favoritesBtn: document.getElementById('favorites-btn'),
+    favoritesModal: document.getElementById('favorites-modal'),
+    favoritesList: document.getElementById('favorites-list'),
+    importExportBtn: document.getElementById('import-export-btn'),
+    importExportModal: document.getElementById('import-export-modal'),
+    exportBtn: document.getElementById('export-btn'),
+    importBtn: document.getElementById('import-btn'),
+    importFile: document.getElementById('import-file'),
+    themeSettingsBtn: document.getElementById('theme-settings-btn'),
+    themeSettingsModal: document.getElementById('theme-settings-modal'),
+    themeOptions: document.querySelectorAll('.theme-option'),
+    primaryColorPicker: document.getElementById('primary-color'),
+    accentColorPicker: document.getElementById('accent-color')
+};
+
+// 初始化收藏夹
+function initializeFavorites() {
+    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    renderFavorites();
+}
+
+// 渲染收藏夹
+function renderFavorites() {
+    if (!elements.favoritesList) return;
+    
+    elements.favoritesList.innerHTML = favorites.map((site, index) => `
+        <div class="favorite-item" draggable="true" data-index="${index}">
+            <i class="bi ${site.icon} favorite-icon"></i>
+            <div class="favorite-info">
+                <div class="favorite-name">${site.name}</div>
+                <div class="favorite-url">${site.url}</div>
+            </div>
+            <div class="favorite-actions">
+                <button class="action-btn remove-favorite" data-index="${index}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    // 添加拖拽事件监听
+    const favoriteItems = elements.favoritesList.querySelectorAll('.favorite-item');
+    favoriteItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+    });
+}
+
+// 拖拽相关函数
+function handleDragStart(e) {
+    e.target.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', e.target.dataset.index);
+}
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    const draggingItem = document.querySelector('.dragging');
+    if (draggingItem !== e.target) {
+        e.target.classList.add('drag-over');
+    }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+    const toIndex = parseInt(e.target.closest('.favorite-item').dataset.index);
+    
+    if (fromIndex !== toIndex) {
+        const temp = favorites[fromIndex];
+        favorites.splice(fromIndex, 1);
+        favorites.splice(toIndex, 0, temp);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        renderFavorites();
+    }
+    
+    e.target.classList.remove('drag-over');
+}
+
+// 添加到收藏夹
+function addToFavorites(site) {
+    if (!favorites.some(f => f.url === site.url)) {
+        favorites.push(site);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        renderFavorites();
+        showToast('已添加到收藏夹', 'success');
+    } else {
+        showToast('该网站已在收藏夹中');
+    }
+}
+
+// 从收藏夹移除
+function removeFromFavorites(index) {
+    favorites.splice(index, 1);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    renderFavorites();
+    showToast('已从收藏夹移除', 'success');
+}
+
+// 导入导出功能
+function exportData() {
+    const data = {
+        sites: sites,
+        favorites: favorites,
+        theme: currentTheme
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nav-site-backup.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('数据导出成功', 'success');
+}
+
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            sites = data.sites || sites;
+            favorites = data.favorites || favorites;
+            currentTheme = data.theme || currentTheme;
+            
+            localStorage.setItem('sites', JSON.stringify(sites));
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            localStorage.setItem('theme', currentTheme);
+            
+            applyTheme(currentTheme);
+            renderSites();
+            renderFavorites();
+            showToast('数据导入成功', 'success');
+        } catch (error) {
+            showToast('导入失败：无效的文件格式');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// 主题相关函数
+function initializeTheme() {
+    applyTheme(currentTheme);
+    document.body.classList.toggle('dark-mode', currentTheme === 'dark');
+}
+
+function applyTheme(theme) {
+    document.body.className = theme;
+    currentTheme = theme;
+    localStorage.setItem('theme', theme);
+    
+    // 更新主题选项的激活状态
+    elements.themeOptions.forEach(option => {
+        option.classList.toggle('active', option.dataset.theme === theme);
+    });
+}
+
+function applyCustomColors(primary, accent) {
+    document.documentElement.style.setProperty('--primary-color', primary);
+    document.documentElement.style.setProperty('--accent-color', accent);
+}
+
+// 事件监听器
+function initializeEventListeners() {
+    // 收藏夹按钮
+    elements.favoritesBtn.addEventListener('click', () => {
+        elements.favoritesModal.style.display = 'block';
+    });
+    
+    // 导入导出按钮
+    elements.importExportBtn.addEventListener('click', () => {
+        elements.importExportModal.style.display = 'block';
+    });
+    
+    elements.exportBtn.addEventListener('click', exportData);
+    
+    elements.importBtn.addEventListener('click', () => {
+        elements.importFile.click();
+    });
+    
+    elements.importFile.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            importData(e.target.files[0]);
+        }
+    });
+    
+    // 主题设置
+    elements.themeSettingsBtn.addEventListener('click', () => {
+        elements.themeSettingsModal.style.display = 'block';
+    });
+    
+    elements.themeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const theme = option.dataset.theme;
+            applyTheme(theme);
+        });
+    });
+    
+    elements.primaryColorPicker.addEventListener('change', (e) => {
+        applyCustomColors(e.target.value, elements.accentColorPicker.value);
+    });
+    
+    elements.accentColorPicker.addEventListener('change', (e) => {
+        applyCustomColors(elements.primaryColorPicker.value, e.target.value);
+    });
+    
+    // 关闭按钮
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.closest('.modal').style.display = 'none';
+        });
+    });
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFavorites();
+    initializeTheme();
+    initializeEventListeners();
+    // ... existing initialization code ...
+});
+
 // 渲染分类标签
 function renderCategories() {
     const categoryTags = document.getElementById('category-tags');

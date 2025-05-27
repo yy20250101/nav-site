@@ -25,9 +25,20 @@
                 <input type="text" id="search-input" placeholder="搜索网站...">
                 <button id="search-btn"><i class="bi bi-search"></i></button>
             </div>
-            <button id="theme-toggle" class="theme-toggle">
-                <i class="bi bi-moon-stars"></i>
-            </button>
+            <div class="header-actions">
+                <button id="favorites-btn" class="action-btn" title="收藏夹">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button id="import-export-btn" class="action-btn" title="导入/导出">
+                    <i class="bi bi-arrow-down-up"></i>
+                </button>
+                <button id="theme-settings-btn" class="action-btn" title="主题设置">
+                    <i class="bi bi-palette"></i>
+                </button>
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+            </div>
         </header>
 
         <!-- 分类标签 -->
@@ -109,6 +120,83 @@
 
     <!-- 提示框 -->
     <div id="toast" class="toast"></div>
+
+    <!-- 收藏夹模态框 -->
+    <div id="favorites-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>我的收藏</h2>
+                <button class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="favorites-list" class="favorites-list">
+                <!-- 收藏的网站将在这里动态显示 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入/导出模态框 -->
+    <div id="import-export-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>导入/导出</h2>
+                <button class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="import-export-options">
+                <button id="export-btn" class="btn-primary">
+                    <i class="bi bi-download"></i> 导出数据
+                </button>
+                <button id="import-btn" class="btn-primary">
+                    <i class="bi bi-upload"></i> 导入数据
+                </button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 主题设置模态框 -->
+    <div id="theme-settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>主题设置</h2>
+                <button class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="theme-options">
+                <div class="theme-option" data-theme="default">
+                    <div class="theme-preview default-theme"></div>
+                    <span>默认主题</span>
+                </div>
+                <div class="theme-option" data-theme="dark">
+                    <div class="theme-preview dark-theme"></div>
+                    <span>暗色主题</span>
+                </div>
+                <div class="theme-option" data-theme="ocean">
+                    <div class="theme-preview ocean-theme"></div>
+                    <span>海洋主题</span>
+                </div>
+                <div class="theme-option" data-theme="forest">
+                    <div class="theme-preview forest-theme"></div>
+                    <span>森林主题</span>
+                </div>
+                <div class="theme-option" data-theme="sunset">
+                    <div class="theme-preview sunset-theme"></div>
+                    <span>日落主题</span>
+                </div>
+            </div>
+            <div class="custom-theme-section">
+                <h3>自定义主题色</h3>
+                <div class="color-pickers">
+                    <div class="color-picker">
+                        <label>主色调</label>
+                        <input type="color" id="primary-color" value="#4361ee">
+                    </div>
+                    <div class="color-picker">
+                        <label>强调色</label>
+                        <input type="color" id="accent-color" value="#7209b7">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
     <!-- 百度统计 -->

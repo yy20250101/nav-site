@@ -26,6 +26,37 @@
     --border-color: #404040;
 }
 
+/* 新增主题变量 */
+/* 海洋主题 */
+.ocean-theme {
+    --primary-color: #006d77;
+    --secondary-color: #83c5be;
+    --accent-color: #e29578;
+    --background-color: #edf6f9;
+    --card-bg-color: #ffffff;
+    --text-color: #2c3e50;
+}
+
+/* 森林主题 */
+.forest-theme {
+    --primary-color: #2d6a4f;
+    --secondary-color: #40916c;
+    --accent-color: #95d5b2;
+    --background-color: #f8f9fa;
+    --card-bg-color: #ffffff;
+    --text-color: #1b4332;
+}
+
+/* 日落主题 */
+.sunset-theme {
+    --primary-color: #e76f51;
+    --secondary-color: #f4a261;
+    --accent-color: #e9c46a;
+    --background-color: #fef9ef;
+    --card-bg-color: #ffffff;
+    --text-color: #264653;
+}
+
 /* 基本样式 */
 * {
     margin: 0;
@@ -425,4 +456,173 @@ header {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* 头部操作按钮 */
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all var(--transition-speed);
+}
+
+.action-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--primary-color);
+}
+
+/* 收藏夹样式 */
+.favorites-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.favorite-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    cursor: move;
+}
+
+.favorite-item:hover {
+    border-color: var(--primary-color);
+}
+
+.favorite-icon {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.favorite-info {
+    flex: 1;
+}
+
+.favorite-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* 导入导出按钮 */
+.import-export-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all var(--transition-speed);
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-color);
+}
+
+/* 主题设置 */
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.theme-option {
+    text-align: center;
+    cursor: pointer;
+}
+
+.theme-preview {
+    width: 100%;
+    height: 80px;
+    border-radius: var(--border-radius);
+    margin-bottom: 8px;
+    border: 2px solid transparent;
+    transition: all var(--transition-speed);
+}
+
+.theme-option:hover .theme-preview {
+    transform: scale(1.05);
+}
+
+.theme-option.active .theme-preview {
+    border-color: var(--primary-color);
+}
+
+.theme-preview.default-theme {
+    background: linear-gradient(135deg, #4361ee, #7209b7);
+}
+
+.theme-preview.dark-theme {
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+}
+
+.theme-preview.ocean-theme {
+    background: linear-gradient(135deg, #006d77, #83c5be);
+}
+
+.theme-preview.forest-theme {
+    background: linear-gradient(135deg, #2d6a4f, #95d5b2);
+}
+
+.theme-preview.sunset-theme {
+    background: linear-gradient(135deg, #e76f51, #e9c46a);
+}
+
+.custom-theme-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.color-pickers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.color-picker label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.color-picker input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2px;
+}
+
+/* 拖拽相关样式 */
+.dragging {
+    opacity: 0.5;
+    background-color: var(--border-color);
+}
+
+.drag-over {
+    border: 2px dashed var(--primary-color);
 } 
