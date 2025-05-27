@@ -899,12 +899,135 @@ function renderFavorites() {
     `).join('');
 }
 
-// 修改网站卡片渲染函数，添加收藏按钮
+// 获取网站图标的函数
+async function getFavicon(url) {
+    try {
+        // 解析URL获取域名
+        const domain = new URL(url).hostname;
+        
+        // 首先尝试使用Google Favicon API
+        const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+        
+        // 创建Image对象来测试图标是否可用
+        const img = new Image();
+        img.src = googleFaviconUrl;
+        
+        return new Promise((resolve) => {
+            img.onload = () => {
+                // 如果图标加载成功，返回Google Favicon URL
+                resolve(googleFaviconUrl);
+            };
+            
+            img.onerror = () => {
+                // 如果Google Favicon加载失败，尝试网站自身的favicon.ico
+                const fallbackUrl = `https://${domain}/favicon.ico`;
+                const fallbackImg = new Image();
+                fallbackImg.src = fallbackUrl;
+                
+                fallbackImg.onload = () => {
+                    resolve(fallbackUrl);
+                };
+                
+                fallbackImg.onerror = () => {
+                    // 如果都失败了，返回默认图标类
+                    resolve(null);
+                };
+            };
+        });
+    } catch (error) {
+        console.error('获取网站图标失败:', error);
+        return null;
+    }
+}
+
+// 修改添加网站的处理函数
+async function handleAddSite(e) {
+    e.preventDefault();
+    
+    // 获取表单数据
+    const name = document.getElementById('site-name').value.trim();
+    const url = document.getElementById('site-url').value.trim();
+    const category = document.getElementById('site-category').value;
+    
+    // 验证数据
+    if (!name || !url || !category) {
+        showToast('请填写完整信息', 'error');
+        return;
+    }
+
+    // 验证URL格式
+    try {
+        new URL(url);
+    } catch (e) {
+        showToast('请输入有效的网址', 'error');
+        return;
+    }
+
+    // 检查是否已存在相同URL
+    if (sites.some(site => site.url === url)) {
+        showToast('该网站已存在', 'error');
+        return;
+    }
+
+    // 显示加载提示
+    showToast('正在获取网站图标...', 'info');
+
+    // 获取网站图标
+    const faviconUrl = await getFavicon(url);
+    
+    // 根据分类选择合适的图标类名（作为备选）
+    let iconClass = 'bi-link';
+    switch (category) {
+        case 'search': iconClass = 'bi-search'; break;
+        case 'ai': iconClass = 'bi-robot'; break;
+        case 'tools': iconClass = 'bi-tools'; break;
+        case 'dev': iconClass = 'bi-code-square'; break;
+        case 'media': iconClass = 'bi-play-circle'; break;
+        case 'game': iconClass = 'bi-controller'; break;
+        case 'social': iconClass = 'bi-people'; break;
+        case 'storage': iconClass = 'bi-hdd'; break;
+        case 'netdisk': iconClass = 'bi-cloud'; break;
+        case 'learning': iconClass = 'bi-book'; break;
+    }
+
+    // 创建新网站对象
+    const newSite = {
+        name,
+        url,
+        category,
+        icon: iconClass, // 默认使用分类图标
+        faviconUrl: faviconUrl // 保存获取到的favicon URL
+    };
+
+    // 添加到网站列表
+    sites.push(newSite);
+    
+    // 保存到本地存储
+    localStorage.setItem('sites', JSON.stringify(sites));
+    
+    // 重新渲染网站列表
+    renderSites();
+    
+    // 关闭模态框
+    document.getElementById('add-site-modal').style.display = 'none';
+    
+    // 重置表单
+    e.target.reset();
+    
+    // 显示成功提示
+    showToast('网站添加成功！', 'success');
+}
+
+// 修改网站卡片渲染函数，支持显示favicon
 function renderSiteCard(site) {
     const isFavorite = favorites.some(f => f.url === site.url);
+    const iconHtml = site.faviconUrl ? 
+        `<img src="${site.faviconUrl}" class="site-favicon" alt="${site.name}" onerror="this.onerror=null;this.src='';this.className='bi ${site.icon} site-icon';">` :
+        `<i class="bi ${site.icon} site-icon"></i>`;
+    
     return `
         <div class="site-card">
-            <i class="bi ${site.icon} site-icon"></i>
+            ${iconHtml}
             <div class="site-name">${site.name}</div>
             <div class="site-actions">
                 <a href="${site.url}" target="_blank" class="action-btn">
@@ -1068,97 +1191,6 @@ function renderCategories() {
             ${category.name}
         </button>
     `).join('');
-}
-
-// 添加网站表单处理
-function handleAddSite(e) {
-    e.preventDefault();
-    
-    // 获取表单数据
-    const name = document.getElementById('site-name').value.trim();
-    const url = document.getElementById('site-url').value.trim();
-    const category = document.getElementById('site-category').value;
-    
-    // 验证数据
-    if (!name || !url || !category) {
-        showToast('请填写完整信息', 'error');
-        return;
-    }
-
-    // 验证URL格式
-    try {
-        new URL(url);
-    } catch (e) {
-        showToast('请输入有效的网址', 'error');
-        return;
-    }
-
-    // 检查是否已存在相同URL
-    if (sites.some(site => site.url === url)) {
-        showToast('该网站已存在', 'error');
-        return;
-    }
-
-    // 根据分类选择合适的图标
-    let icon = 'bi-link';
-    switch (category) {
-        case 'search':
-            icon = 'bi-search';
-            break;
-        case 'ai':
-            icon = 'bi-robot';
-            break;
-        case 'tools':
-            icon = 'bi-tools';
-            break;
-        case 'dev':
-            icon = 'bi-code-square';
-            break;
-        case 'media':
-            icon = 'bi-play-circle';
-            break;
-        case 'game':
-            icon = 'bi-controller';
-            break;
-        case 'social':
-            icon = 'bi-people';
-            break;
-        case 'storage':
-            icon = 'bi-hdd';
-            break;
-        case 'netdisk':
-            icon = 'bi-cloud';
-            break;
-        case 'learning':
-            icon = 'bi-book';
-            break;
-    }
-
-    // 创建新网站对象
-    const newSite = {
-        name,
-        url,
-        category,
-        icon
-    };
-
-    // 添加到网站列表
-    sites.push(newSite);
-    
-    // 保存到本地存储
-    localStorage.setItem('sites', JSON.stringify(sites));
-    
-    // 重新渲染网站列表
-    renderSites();
-    
-    // 关闭模态框
-    document.getElementById('add-site-modal').style.display = 'none';
-    
-    // 重置表单
-    e.target.reset();
-    
-    // 显示成功提示
-    showToast('网站添加成功！', 'success');
 }
 
 // 导入导出功能

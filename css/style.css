@@ -209,9 +209,18 @@ header {
     box-shadow: var(--shadow-md);
 }
 
+.site-favicon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
 .site-icon {
     font-size: 24px;
     color: var(--primary-color);
+    margin-bottom: 8px;
 }
 
 .site-name {
@@ -589,4 +598,37 @@ footer {
 
 .drag-over {
     border: 2px dashed var(--primary-color);
+}
+
+/* 图标加载动画 */
+@keyframes iconPulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.site-favicon.loading {
+    animation: iconPulse 1.5s infinite;
+}
+
+/* 网站卡片样式优化 */
+.site-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+    height: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.site-card:hover .site-favicon,
+.site-card:hover .site-icon {
+    transform: scale(1.1);
+}
+
+.site-favicon,
+.site-icon {
+    transition: transform var(--transition-speed);
 } 
