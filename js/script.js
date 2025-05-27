@@ -902,40 +902,33 @@ function renderFavorites() {
 // 获取网站图标的函数
 async function getFavicon(url) {
     try {
-        // 解析URL获取域名
-        const domain = new URL(url).hostname;
-        
-        // 首先尝试使用Google Favicon API
-        const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-        
-        // 创建Image对象来测试图标是否可用
-        const img = new Image();
-        img.src = googleFaviconUrl;
-        
-        return new Promise((resolve) => {
-            img.onload = () => {
-                // 如果图标加载成功，返回Google Favicon URL
-                resolve(googleFaviconUrl);
-            };
-            
-            img.onerror = () => {
-                // 如果Google Favicon加载失败，尝试网站自身的favicon.ico
-                const fallbackUrl = `https://${domain}/favicon.ico`;
-                const fallbackImg = new Image();
-                fallbackImg.src = fallbackUrl;
-                
-                fallbackImg.onload = () => {
-                    resolve(fallbackUrl);
-                };
-                
-                fallbackImg.onerror = () => {
-                    // 如果都失败了，返回默认图标类
-                    resolve(null);
-                };
-            };
-        });
+        // 尝试多个favicon获取方式
+        const domain = new URL(url).origin;
+        const faviconUrls = [
+            `https://www.google.com/s2/favicons?domain=${url}&sz=32`,
+            `${domain}/favicon.ico`,
+            `${domain}/favicon.png`,
+            `${domain}/apple-touch-icon.png`,
+            `${domain}/apple-touch-icon-precomposed.png`
+        ];
+
+        // 依次尝试每个URL
+        for (const faviconUrl of faviconUrls) {
+            try {
+                const response = await fetch(faviconUrl, { method: 'HEAD' });
+                if (response.ok) {
+                    return faviconUrl;
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch favicon from ${faviconUrl}:`, error);
+                continue;
+            }
+        }
+
+        // 如果所有尝试都失败，返回默认图标
+        return null;
     } catch (error) {
-        console.error('获取网站图标失败:', error);
+        console.error('Error in getFavicon:', error);
         return null;
     }
 }
@@ -1268,51 +1261,53 @@ function applyCustomColors(primary, accent) {
 }
 
 // 初始化函数
-document.addEventListener('DOMContentLoaded', function() {
-    // 检查是否是首次访问
-    const isFirstVisit = !localStorage.getItem('sites');
-    
-    // 如果是首次访问，初始化数据
-    if (isFirstVisit) {
-        // 保存初始网站数据
-        localStorage.setItem('sites', JSON.stringify(initialSites));
-        // 初始化收藏夹
-        localStorage.setItem('favorites', JSON.stringify([]));
-        // 初始化主题
-        localStorage.setItem('theme', 'default');
-    }
-    
-    // 从本地存储加载数据
-    sites = JSON.parse(localStorage.getItem('sites')) || initialSites;
-    favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    currentTheme = localStorage.getItem('theme') || 'default';
-    
-    // 初始化DOM元素
-    initializeElements();
-    
-    // 初始化事件监听
-    initializeEventListeners();
-    
-    // 初始化主题
-    initializeTheme();
-    
-    // 初始化收藏夹
-    initializeFavorites();
-    
-    // 渲染分类标签
-    renderCategories();
-    
-    // 渲染网站列表
-    renderSites();
-    
-    // 隐藏加载器
-    document.getElementById('page-loader').style.display = 'none';
-    
-    // 如果是首次访问，显示欢迎提示
-    if (isFirstVisit) {
-        showToast('欢迎使用六月天导航！', 'success');
-    }
-});
+function initializeElements() {
+    // 显示加载动画
+    const loader = document.getElementById('page-loader');
+    loader.style.display = 'flex';
+
+    // 异步初始化所有数据
+    Promise.all([
+        // 从localStorage加载主题设置
+        new Promise(resolve => {
+            initializeTheme();
+            resolve();
+        }),
+        // 从localStorage加载收藏夹数据
+        new Promise(resolve => {
+            initializeFavorites();
+            resolve();
+        }),
+        // 渲染分类标签
+        new Promise(resolve => {
+            renderCategories();
+            resolve();
+        }),
+        // 渲染网站列表
+        new Promise(resolve => {
+            renderSites();
+            resolve();
+        })
+    ]).then(() => {
+        // 初始化事件监听
+        initializeEventListeners();
+        
+        // 隐藏加载动画
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 300);
+        
+        // 显示成功提示
+        showToast('网站加载完成', 'success');
+    }).catch(error => {
+        console.error('初始化失败:', error);
+        showToast('加载失败，请刷新重试', 'error');
+    });
+}
+
+// 确保DOM加载完成后再初始化
+document.addEventListener('DOMContentLoaded', initializeElements);
 
 // 初始化DOM元素
 function initializeElements() {
