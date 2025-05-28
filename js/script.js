@@ -72,6 +72,74 @@ const initialSites = [
       "icon": "bi-translate",
       "faviconUrl": "https://fanyi.baidu.com/favicon.ico"
     },
+    // 常用导航
+    {
+      "name": "Ayobe小贤定向链接",
+      "url": "https://c1wtkpld08.feishu.cn/sheets/GvuusRw89h8f4jt0U0Cce00LnWb",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": null,
+      "isLoadingFavicon": true,
+      "retryCount": 0
+    },
+    {
+      "name": "百度AI图片助手",
+      "url": "https://image.baidu.com/search/index?showMask=1&fr=csaitab&tn=baiduimage&toolType=1&word=bdaitpzs百度AI图片助手bdaitpzs",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/image.baidu.com"
+    },
+    {
+      "name": "FreeAI-算力平台",
+      "url": "https://qwq.aigpu.cn",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/qwq.aigpu.cn"
+    },
+    {
+      "name": "魔搭社区",
+      "url": "https://www.modelscope.cn/models?page=1&tasks=auto-speech-recognition&type=audio",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/www.modelscope.cn"
+    },
+    {
+      "name": "传文件找文叔叔",
+      "url": "https://www.wenshushu.cn/",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://www.wenshushu.cn/favicon.ico"
+    },
+    {
+      "name": "2925邮箱-无限邮",
+      "url": "https://2925.com/#/",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/2925.com"
+    },
+    {
+      "name": "魔法站 — iKuuu VPN",
+      "url": "https://ikuuu.one/user",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/ikuuu.one"
+    },
+    {
+      "name": "西部世界VPN",
+      "url": "https://xbsj5632.website/portal/order/node",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": "https://favicon.yandex.net/favicon/xbsj5632.website"
+    },
+    {
+      "name": "二级域名分发系统",
+      "url": "https://sds.leleo.top",
+      "category": "common",
+      "icon": "bi-link",
+      "faviconUrl": null,
+      "isLoadingFavicon": false,
+      "retryCount": 1
+    },
     // 网盘搜索
     {
       "name": "夸克盘搜",
@@ -419,6 +487,13 @@ const initialSites = [
       "faviconUrl": "https://favicon.yandex.net/favicon/tv.cctv.com"
     },
     {
+      "name": "YouTube",
+      "url": "https://www.youtube.com",
+      "category": "media",
+      "icon": "bi-music-note",
+      "faviconUrl": "https://favicon.yandex.net/favicon/www.youtube.com"
+    },
+    {
       "name": "抖音网页版",
       "url": "https://www.douyin.com",
       "category": "media",
@@ -743,23 +818,6 @@ const initialSites = [
       "category": "tools",
       "icon": "bi-globe",
       "faviconUrl": "https://favicon.yandex.net/favicon/www.airportnode.com"
-    },
-    // 常用导航
-    {
-      "name": "Ayobe小贤定向链接",
-      "url": "https://c1wtkpld08.feishu.cn/sheets/GvuusRw89h8f4jt0U0Cce00LnWb",
-      "category": "common",
-      "icon": "bi-link",
-      "faviconUrl": null,
-      "isLoadingFavicon": true,
-      "retryCount": 0
-    },
-    {
-      "name": "YouTube",
-      "url": "https://www.youtube.com",
-      "category": "media",
-      "icon": "bi-youtube",
-      "faviconUrl": "https://favicon.yandex.net/favicon/www.youtube.com"
     },
     // 开发类
     {
